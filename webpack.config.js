@@ -4,11 +4,11 @@ const path    = require('path');
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 module.exports = {
-  entry: './src/blacksea.js',
+  entry: './src/sirko.js',
   output: {
     path:     __dirname + '/dist',
-    filename: 'blacksea.js',
-    library:  'blacksea'
+    filename: 'sirko.js',
+    library:  'Sirko'
   },
 
   watch: NODE_ENV == 'development',
@@ -32,6 +32,7 @@ module.exports = {
 
         include: [
           path.resolve(__dirname, 'src'),
+          path.resolve(__dirname, 'test')
         ],
 
         loader: 'babel',
