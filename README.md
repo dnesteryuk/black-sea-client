@@ -39,5 +39,5 @@ now tests can be executed in a browser by opening [http://localhost:8080/test](h
 ### Production build
 
 ```
-$ npm build
+$ NODE_ENV=production webpack
 ```

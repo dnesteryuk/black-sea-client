@@ -18,6 +18,8 @@ class Sirko {
   _appendLink() {
     let nextPath = this.xhr.response;
 
+    if (!nextPath) return;
+
     let link = document.createElement('link');
     link.setAttribute('href', nextPath);
     link.setAttribute('rel', 'prerender');

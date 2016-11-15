@@ -20,7 +20,6 @@
   },
   "scripts": {
     "start": "NODE_ENV=development webpack",
-    "build": "NODE_ENV=production webpack",
     "test": "webpack-dev-server 'mocha!./test/sirko_test.js' --hot --inline --output-filename test.js"
   },
   "repository": {

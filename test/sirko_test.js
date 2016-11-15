@@ -12,6 +12,9 @@ describe('Sirko', function() {
 
   afterEach(function() {
     this.xhr.restore();
+    let link = document.querySelector('link[rel="prerender"]');
+
+    if (link) link.parentNode.removeChild(link);
   });
 
   describe('.predict', function() {
@@ -40,6 +43,18 @@ describe('Sirko', function() {
 
       assert(link);
       assert.equal(link.href, 'http://localhost:8080/list');
+    });
+
+    context('the engine does not make prediction', function() {
+      it('does not append a link tag', function() {
+        Sirko.predict('https://sirko.io');
+
+        this.request.respond(200, {}, '');
+
+        let link = document.querySelector('link[rel="prerender"]');
+
+        assert.equal(link, null);
+      });
     });
   });
 });
