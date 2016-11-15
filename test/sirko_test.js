@@ -23,14 +23,14 @@ describe('Sirko', function() {
 
       assert(this.request);
       assert.equal(this.request.method, 'GET');
-      assert.equal(this.request.url, 'https://sirko.io/predict?cur=http%3A%2F%2Flocalhost%3A8080%2Ftest');
+      assert.equal(this.request.url, 'https://sirko.io/predict?cur=http%3A%2F%2Flocalhost%3A9876%2Fcontext.html');
     });
 
     context('the referral url is provided', function() {
       it('includes the referral url', function() {
         Sirko.predict('https://sirko.io', 'http://app.io/index', 'http://app.io/');
 
-        assert.equal(this.request.url, 'https://sirko.io/predict?cur=http%3A%2F%2Flocalhost%3A8080%2Ftest&ref=http%3A%2F%2Fapp.io%2Findex');
+        assert.equal(this.request.url, 'https://sirko.io/predict?cur=http%3A%2F%2Flocalhost%3A9876%2Fcontext.html&ref=http%3A%2F%2Fapp.io%2Findex');
       });
     });
 
@@ -42,7 +42,7 @@ describe('Sirko', function() {
       let link = document.querySelector('link[rel="prerender"]');
 
       assert(link);
-      assert.equal(link.href, 'http://localhost:8080/list');
+      assert.equal(link.href, 'http://localhost:9876/list');
     });
 
     context('the engine does not make prediction', function() {
