@@ -39,7 +39,10 @@ module.exports = {
 
         query: {
           presets: ['es2015'],
-          plugins: ['transform-runtime'],
+          plugins: [
+            'transform-runtime',
+            'add-module-exports'
+          ],
           cacheDirectory: true
         }
       },
