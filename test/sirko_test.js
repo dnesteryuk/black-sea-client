@@ -28,7 +28,7 @@ describe('Sirko', function() {
 
     context('the referral url is provided', function() {
       it('includes the referral url', function() {
-        Sirko.predict('https://sirko.io', 'http://app.io/index', 'http://app.io/');
+        Sirko.predict('https://sirko.io', 'http://app.io/index');
 
         assert.equal(this.request.url, 'https://sirko.io/predict?cur=http%3A%2F%2Flocalhost%3A9876%2Fcontext.html&ref=http%3A%2F%2Fapp.io%2Findex');
       });

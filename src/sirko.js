@@ -1,6 +1,8 @@
+import Page from './sirko/page';
+
 /**
  * This prototype tracks the current page visited by a particular user
- * and gets a next page which will be visited by the current user.
+ * and gets a next page to be visited by the current user.
  */
 class Sirko {
   constructor(engineUrl) {
@@ -20,12 +22,7 @@ class Sirko {
 
     if (!nextPath) return;
 
-    let link = document.createElement('link');
-    link.setAttribute('href', nextPath);
-    link.setAttribute('rel', 'prerender');
-
-    let head = document.querySelector('head');
-    head.appendChild(link);
+    Page.appendLink('prerender', nextPath);
   }
 
   _predictorUrl(currentUrl, referralUrl) {
@@ -41,7 +38,13 @@ class Sirko {
 
   static predict(engineUrl, referralUrl) {
     let instance = new Sirko(engineUrl);
-    instance.predict(window.location, referralUrl);
+
+    // don't try to prerender a page if the current page
+    // is prerendered. Otherwise, it leads to prerendering
+    // a chain of pages for one request.
+    Page.onceVisible(
+      () => instance.predict(window.location, referralUrl)
+    );
   }
 }
 
