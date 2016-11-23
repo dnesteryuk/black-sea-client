@@ -46,3 +46,7 @@ $ NODE_ENV=production webpack
 ```
 
 It builds the `dist/sirko.js` script which should be included into the site.
+
+## License
+
+The library is distributed under the [GPLv3 license](https://github.com/dnesteryuk/sirko-client/blob/master/LICENSE.txt).
