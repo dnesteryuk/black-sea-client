@@ -1,9 +1,9 @@
 import assert from 'assert';
 import sinon from 'sinon';
 
-import Sirko from '../src/sirko';
+import Client from '../../src/sirko/client';
 
-describe('Sirko', function() {
+describe('Client', function() {
   beforeEach(function() {
     this.xhr = sinon.useFakeXMLHttpRequest();
 
@@ -19,7 +19,7 @@ describe('Sirko', function() {
 
   describe('.predict', function() {
     it('makes a request to the engine', function() {
-      Sirko.predict('https://sirko.io');
+      Client.predict('https://sirko.io');
 
       assert(this.request);
       assert.equal(this.request.method, 'GET');
@@ -28,14 +28,14 @@ describe('Sirko', function() {
 
     context('the referral url is provided', function() {
       it('includes the referral url', function() {
-        Sirko.predict('https://sirko.io', 'http://app.io/index');
+        Client.predict('https://sirko.io', 'http://app.io/index');
 
         assert.equal(this.request.url, 'https://sirko.io/predict?cur=http%3A%2F%2Flocalhost%3A9876%2Fcontext.html&ref=http%3A%2F%2Fapp.io%2Findex');
       });
     });
 
     it('appends a link tag declaring the browser to prerender the given url of the next page', function() {
-      Sirko.predict('https://sirko.io');
+      Client.predict('https://sirko.io');
 
       this.request.respond(200, {}, '/list');
 
@@ -47,7 +47,7 @@ describe('Sirko', function() {
 
     context('the engine does not make prediction', function() {
       it('does not append a link tag', function() {
-        Sirko.predict('https://sirko.io');
+        Client.predict('https://sirko.io');
 
         this.request.respond(200, {}, '');
 
