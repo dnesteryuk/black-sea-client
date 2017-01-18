@@ -4,5 +4,10 @@ let sirko = window.sirko;
 
 // Makes a request to the engine once the script gets loaded.
 if (sirko) {
-  Client.predict(sirko.s.engineUrl, sirko.r);
+  let requestInfo = {
+    agent:    window.navigator.userAgent,
+    referral: sirko.r
+  };
+
+  Client.predict(sirko.s.engineUrl, requestInfo);
 }

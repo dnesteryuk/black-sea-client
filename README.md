@@ -78,7 +78,7 @@ It will launch the Chrome browser and keep it running to re-launch tests when th
 ### Production build
 
 ```
-$ NODE_ENV=production webpack
+$ NODE_ENV=prod webpack
 ```
 
 It builds the `dist/sirko.js` script which should be included into the site.

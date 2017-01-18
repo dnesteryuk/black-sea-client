@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const path    = require('path');
 
-const NODE_ENV = process.env.NODE_ENV || 'development';
+const NODE_ENV = process.env.NODE_ENV || 'dev';
 
 module.exports = {
   entry: './src/sirko.js',
@@ -11,13 +11,13 @@ module.exports = {
     library:  'Sirko'
   },
 
-  watch: NODE_ENV == 'development',
+  watch: NODE_ENV == 'dev',
 
   watchOptions: {
     aggregateTimeout: 100
   },
 
-  devtool: NODE_ENV == 'development' ? 'cheap-inline-module-source-map' : null,
+  devtool: NODE_ENV == 'dev' ? 'cheap-inline-module-source-map' : null,
 
   plugins: [
     new webpack.DefinePlugin({
@@ -39,10 +39,6 @@ module.exports = {
 
         query: {
           presets: ['es2015'],
-          plugins: [
-            'transform-runtime',
-            'add-module-exports'
-          ],
           cacheDirectory: true
         }
       },
@@ -50,14 +46,15 @@ module.exports = {
   }
 };
 
-if (NODE_ENV == 'production') {
+if (NODE_ENV == 'prod') {
   module.exports.plugins.push(
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings:     false,
         drop_console: true,
         unsafe:       true
-      }
+      },
+      comments: false
     })
   );
 }
