@@ -1,7 +1,7 @@
 {
   "name": "sirko-client",
   "version": "0.0.1",
-  "description": "TODO",
+  "description": "The client for the sirko engine making predictions about users' navigation.",
   "main": "dist/sirko.js",
   "directories": {
     "test": "test"
@@ -23,7 +23,7 @@
     "webpack": "^1.13.2"
   },
   "scripts": {
-    "start": "NODE_ENV=development webpack",
+    "start": "NODE_ENV=dev webpack",
     "test": "karma start karma.conf.js"
   },
   "repository": {

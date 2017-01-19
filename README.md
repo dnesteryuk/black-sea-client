@@ -10,9 +10,31 @@ A full description of the prerendering idea can be found in [this article](http:
 
 ## Usage
 
-Currently, the client can only be installed through the [bower](https://bower.io) or [npm](https://www.npmjs.com). [Later the engine](https://github.com/dnesteryuk/sirko-engine/issues/20) will be shipped with the client and it can be required from the engine.
+There are 2 options to get the client in a project. Both options asynchronously load the client and makes a request to the engine once the script has loaded.
 
-1. Add the sirko client to a `bower.json` file:
+First of all, add the following code before `</head>`:
+
+```html
+<script>
+  window.sirko=window.sirko||{};
+  sirko.s={engineUrl: 'http://__URL_TO_ENGINE__'}; // replace with a real url
+  sirko.r='__REQUEST_REFERER__'; // replace with your code to get a HTTP REFERER
+</script>
+```
+
+### Option 1
+
+The engine gets shipped with the client. You can easily request the client from the engine. To do that, add the following code before `</head>`:
+
+```html
+<script async src="http://__URL_TO_ENGINE__/assets/client.js"></script>
+```
+
+### Option 2
+
+The client is released as a npm package.
+
+1. Add the client to your `package.json` file:
 
     ```json
     "dependencies": {
@@ -23,16 +45,10 @@ Currently, the client can only be installed through the [bower](https://bower.io
 2. Add the following code before `</head>`:
 
     ```html
-    <script>
-      window.sirko=window.sirko||{};
-      sirko.s={engineUrl: 'URL TO THE ENGINE'}; // replace with your url to the engine
-      sirko.r='REQUEST REFERER'; // replace with your code to get a HTTP REFERER
-    </script>
-
-    <script async src="bower_components/sirko/dist/sirko.js"></script>
+    <script async src="node_modules/sirko/dist/sirko.js"></script>
     ```
 
-The code above asynchronously loads the client and makes a request to the engine once the script gets loaded.
+    **Note:** You may need to change the src attribute if the node_modules folder isn't a public directory.
 
 If the [Asset pipeline](http://guides.rubyonrails.org/asset_pipeline.html) or a similar technology is in use, the client can be included to a bundle:
 
@@ -40,7 +56,7 @@ If the [Asset pipeline](http://guides.rubyonrails.org/asset_pipeline.html) or a 
 //= require sirko/dist/sirko
 ```
 
-In this case, the last line from the code example should be omitted. But, please, be aware that the prediction will only be requested after loading the whole bundle. The asynchronous load is a preferable way to load the client.
+In this case, the second step should be omitted. But, please, be aware that the prediction will only be requested after loading the whole bundle. The asynchronous load is a preferable way to load the client.
 
 ## Development
 
