@@ -7,7 +7,8 @@ describe('Client', function() {
   beforeEach(function() {
     this.requestInfo = {
       agent: 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) ' +
-        'Gecko/20100101 Firefox/50.0'
+        'Gecko/20100101 Firefox/50.0',
+      currentUrl: 'http://app.io'
     };
 
     this.xhr = sinon.useFakeXMLHttpRequest();
@@ -30,21 +31,21 @@ describe('Client', function() {
 
       assert(this.request);
       assert.equal(this.request.method, 'GET');
-      assert.equal(this.request.url, 'https://sirko.io/predict?cur=http%3A%2F%2Flocalhost%3A9876%2Fcontext.html');
+      assert.equal(this.request.url, 'https://sirko.io/predict?cur=http%3A%2F%2Fapp.io');
     });
 
-    context('the referral url is provided', function() {
+    context('the referrer is present', function() {
       beforeEach(function() {
-        this.requestInfo.referral = 'http://app.io/index';
+        this.requestInfo.referrer = 'http://app.io/index';
       });
 
-      it('includes the referral url', function() {
+      it('includes the referrer', function() {
         Client.predict('https://sirko.io', this.requestInfo);
 
         assert.equal(
           this.request.url,
           'https://sirko.io/predict?' +
-          'cur=http%3A%2F%2Flocalhost%3A9876%2Fcontext.html&' +
+          'cur=http%3A%2F%2Fapp.io&' +
           'ref=http%3A%2F%2Fapp.io%2Findex'
         );
       });

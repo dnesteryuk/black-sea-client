@@ -11,9 +11,9 @@ class Client {
     this.xhr = new XMLHttpRequest();
   }
 
-  predict(currentUrl, referralUrl) {
+  predict(currentUrl, referrerUrl) {
     this.xhr.withCredentials = true;
-    this.xhr.open('GET', this._predictorUrl(currentUrl, referralUrl));
+    this.xhr.open('GET', this._predictorUrl(currentUrl, referrerUrl));
     this.xhr.onload = this._appendLink.bind(this);
     this.xhr.send();
   }
@@ -26,13 +26,13 @@ class Client {
     Page.appendLink('prerender', nextPath);
   }
 
-  _predictorUrl(currentUrl, referralUrl) {
+  _predictorUrl(currentUrl, referrerUrl) {
     let current  = encodeURIComponent(currentUrl);
-    let referral = encodeURIComponent(referralUrl);
+    let referrer = encodeURIComponent(referrerUrl);
 
     let url = `${this.engineUrl}/predict?cur=${current}`;
 
-    if (referralUrl) url = url + `&ref=${referral}`;
+    if (referrerUrl) url = url + `&ref=${referrer}`;
 
     return url;
   }
@@ -46,7 +46,7 @@ class Client {
     // is prerendered. Otherwise, it leads to prerendering
     // a chain of pages for one request.
     Page.onceVisible(
-      () => instance.predict(window.location, requestInfo.referral)
+      () => instance.predict(requestInfo.currentUrl, requestInfo.referrer)
     );
   }
 

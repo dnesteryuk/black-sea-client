@@ -18,7 +18,6 @@ First of all, add the following code before `</head>`:
 <script>
   window.sirko=window.sirko||{};
   sirko.s={engineUrl: 'http://__URL_TO_ENGINE__'}; // replace with a real url
-  sirko.r='__REQUEST_REFERER__'; // replace with your code to get a HTTP REFERER
 </script>
 ```
 

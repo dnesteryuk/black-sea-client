@@ -6,9 +6,6 @@
   "directories": {
     "test": "test"
   },
-  "dependencies": {
-    "ismobilejs": "^0.4.0"
-  },
   "devDependencies": {
     "babel-core": "^6.11.4",
     "babel-loader": "^6.2.4",
@@ -20,7 +17,8 @@
     "karma-webpack": "^1.8.0",
     "mocha": "^3.1.2",
     "sinon": "2.0.0-pre.2",
-    "webpack": "^1.13.2"
+    "webpack": "^1.13.2",
+    "ismobilejs": "^0.4.0"
   },
   "scripts": {
     "start": "NODE_ENV=dev webpack",
