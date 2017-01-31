@@ -7,7 +7,8 @@ if (sirko) {
   let requestInfo = {
     agent:      window.navigator.userAgent,
     referrer:   document.referrer,
-    currentUrl: window.location
+    currentUrl: window.location,
+    domain:     document.domain
   };
 
   Client.predict(sirko.s.engineUrl, requestInfo);

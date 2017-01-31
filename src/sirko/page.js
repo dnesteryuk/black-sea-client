@@ -7,12 +7,12 @@ class Page {
    * The callback gets called only once.
    */
   static onceVisible(callback) {
-    if (document.visibilityState == 'visible') {
+    if (document.visibilityState === 'visible') {
       callback.call(this);
     }
     else {
       let fn = function() {
-        if (document.visibilityState == 'visible') {
+        if (document.visibilityState === 'visible') {
           document.removeEventListener('visibilitychange', fn);
 
           callback.call(this);

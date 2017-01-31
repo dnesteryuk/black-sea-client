@@ -1,9 +1,15 @@
 import Page from './page';
-import { Class as isMobile } from 'ismobilejs/isMobile';
+import MobilePreprocessor from './preprocessors/mobile';
+import ReferrerPreprocessor from './preprocessors/referrer';
+
+const preprocessors = [
+  MobilePreprocessor,
+  ReferrerPreprocessor
+];
 
 /**
  * This prototype tracks the current page visited by a particular user
- * and gets a next page to be visited by the current user.
+ * and gets a next page to be visited by the user.
  */
 class Client {
   constructor(engineUrl) {
@@ -38,7 +44,9 @@ class Client {
   }
 
   static predict(engineUrl, requestInfo) {
-    if (!this.isTrackable(requestInfo.agent)) return false;
+    requestInfo = this._preprocess(requestInfo);
+
+    if(!requestInfo) return false;
 
     let instance = new Client(engineUrl);
 
@@ -51,16 +59,16 @@ class Client {
   }
 
   /**
-   * If it is a user from a mobile phone, the client should track
-   * the user's navigation and no prediction should be made.
-   * The goal of this check is to safe the battery of a user.
-   * Also, the look of a mobile site might be different,
-   * hence, the navigation might be different too.
+   * Runs preprocessors which may change the request info or
+   * tell the client to not make prediction by returning false or null.
    */
-  static isTrackable(userAgent) {
-    let mob = new isMobile(userAgent);
+  static _preprocess(requestInfo) {
+    for (let processor of preprocessors) {
+      requestInfo = processor.process(requestInfo);
+      if (!requestInfo) return false;
+    }
 
-    return !mob.any;
+    return requestInfo;
   }
 }
 

@@ -8,7 +8,8 @@ describe('Client', function() {
     this.requestInfo = {
       agent: 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) ' +
         'Gecko/20100101 Firefox/50.0',
-      currentUrl: 'http://app.io'
+      currentUrl: 'http://app.io',
+      domain: 'app.io'
     };
 
     this.xhr = sinon.useFakeXMLHttpRequest();
@@ -84,6 +85,21 @@ describe('Client', function() {
         Client.predict('https://sirko.io', this.requestInfo);
 
         assert.equal(this.request, null);
+      });
+    });
+
+    context('the referrer belongs to an external site', function() {
+      beforeEach(function() {
+        this.requestInfo.referrer = 'http://www.google.com/some-path';
+      });
+
+      it('does not send the referrer', function() {
+        Client.predict('https://sirko.io', this.requestInfo);
+
+        assert.equal(
+          this.request.url,
+          'https://sirko.io/predict?cur=http%3A%2F%2Fapp.io'
+        );
       });
     });
   });
