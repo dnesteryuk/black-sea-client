@@ -1,6 +1,6 @@
 // reuse the webpack config
 var webpackConfig = require('./webpack.config.js');
-webpackConfig.entry = {};
+delete webpackConfig.entry;
 
 module.exports = function(config) {
   var browsers = ['Chrome'];

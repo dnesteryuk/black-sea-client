@@ -17,7 +17,7 @@ module.exports = {
     aggregateTimeout: 100
   },
 
-  devtool: NODE_ENV == 'dev' ? 'cheap-inline-module-source-map' : null,
+  devtool: NODE_ENV == 'dev' ? 'cheap-inline-module-source-map' : false,
 
   plugins: [
     new webpack.DefinePlugin({
@@ -26,7 +26,7 @@ module.exports = {
   ],
 
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
 
@@ -35,9 +35,9 @@ module.exports = {
           path.resolve(__dirname, 'test')
         ],
 
-        loader: 'babel',
+        loader: 'babel-loader',
 
-        query: {
+        options: {
           presets: ['es2015'],
           cacheDirectory: true
         }
