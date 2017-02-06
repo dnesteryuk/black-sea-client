@@ -1,12 +1,12 @@
 /**
- * It is kind of a class keeping helper methods to work with pages.
+ * It is kind of an object keeping helper methods to work with pages.
  */
-class Page {
+const Page = {
   /**
    * Calls the given callback once a page is visible.
    * The callback gets called only once.
    */
-  static onceVisible(callback) {
+  onceVisible: function(callback) {
     if (document.visibilityState === 'visible') {
       callback.call(this);
     }
@@ -21,7 +21,7 @@ class Page {
 
       document.addEventListener('visibilitychange', fn);
     }
-  }
+  },
 
   /**
    * Creates a link tag and adds it to the head of a document.
@@ -29,7 +29,7 @@ class Page {
    * rel  - A value for the rel attribute.
    * href - A value for the href attribute.
    */
-  static appendLink(rel, href) {
+  appendLink: function(rel, href) {
     let link = document.createElement('link');
     link.setAttribute('href', href);
     link.setAttribute('rel', rel);
@@ -37,6 +37,6 @@ class Page {
     let head = document.querySelector('head');
     head.appendChild(link);
   }
-}
+};
 
 export default Page;

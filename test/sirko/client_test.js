@@ -21,38 +21,15 @@ describe('Client', function() {
     this.request = null;
     this.xhr.restore();
 
+    sessionStorage.clear();
+
     let link = document.querySelector('link[rel="prerender"]');
 
     if (link) link.parentNode.removeChild(link);
   });
 
   describe('.predict', function() {
-    it('makes a request to the engine', function() {
-      Client.predict('https://sirko.io', this.requestInfo);
-
-      assert(this.request);
-      assert.equal(this.request.method, 'GET');
-      assert.equal(this.request.url, 'https://sirko.io/predict?cur=http%3A%2F%2Fapp.io');
-    });
-
-    context('the referrer is present', function() {
-      beforeEach(function() {
-        this.requestInfo.referrer = 'http://app.io/index';
-      });
-
-      it('includes the referrer', function() {
-        Client.predict('https://sirko.io', this.requestInfo);
-
-        assert.equal(
-          this.request.url,
-          'https://sirko.io/predict?' +
-          'cur=http%3A%2F%2Fapp.io&' +
-          'ref=http%3A%2F%2Fapp.io%2Findex'
-        );
-      });
-    });
-
-    it('appends a link tag declaring the browser to prerender the given url of the next page', function() {
+    it('appends a link tag declaring the browser to prerender the given url', function() {
       Client.predict('https://sirko.io', this.requestInfo);
 
       this.request.respond(200, {}, '/list');
@@ -61,18 +38,6 @@ describe('Client', function() {
 
       assert(link);
       assert.equal(link.href, 'http://localhost:9876/list');
-    });
-
-    context('the engine does not make prediction', function() {
-      it('does not append a link tag', function() {
-        Client.predict('https://sirko.io', this.requestInfo);
-
-        this.request.respond(200, {}, '');
-
-        let link = document.querySelector('link[rel="prerender"]');
-
-        assert.equal(link, null);
-      });
     });
 
     context('it is a mobile browser', function() {
