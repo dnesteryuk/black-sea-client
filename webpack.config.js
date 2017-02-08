@@ -8,7 +8,7 @@ module.exports = {
   output: {
     path:     __dirname + '/dist',
     filename: 'sirko.js',
-    library:  'Sirko'
+    library:  'SirkoClient'
   },
 
   watch: NODE_ENV == 'dev',
@@ -35,12 +35,7 @@ module.exports = {
           path.resolve(__dirname, 'test')
         ],
 
-        loader: 'babel-loader',
-
-        options: {
-          presets: ['es2015'],
-          cacheDirectory: true
-        }
+        loader: 'babel-loader'
       },
     ]
   }

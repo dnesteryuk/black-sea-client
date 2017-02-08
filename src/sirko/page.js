@@ -6,21 +6,24 @@ const Page = {
    * Calls the given callback once a page is visible.
    * The callback gets called only once.
    */
-  onceVisible: function(callback) {
-    if (document.visibilityState === 'visible') {
-      callback.call(this);
-    }
-    else {
-      let fn = function() {
-        if (document.visibilityState === 'visible') {
-          document.removeEventListener('visibilitychange', fn);
+  onceVisible: function() {
+    let doc = document;
 
-          callback.call(this);
-        }
-      };
+    return new Promise((resolve, reject) => {
+      if (doc.visibilityState === 'visible') {
+        resolve();
+      }
+      else {
+        let fn = () => {
+          if (doc.visibilityState === 'visible') {
+            doc.removeEventListener('visibilitychange', fn);
+            resolve();
+          }
+        };
 
-      document.addEventListener('visibilitychange', fn);
-    }
+        doc.addEventListener('visibilitychange', fn);
+      }
+    });
   },
 
   /**

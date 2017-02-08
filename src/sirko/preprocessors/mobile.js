@@ -8,12 +8,12 @@ import { Class as isMobile } from 'ismobilejs/isMobile';
  * make any sense to track it.
  */
 const Mobile = {
-  process: function(requestInfo) {
-    let mob = new isMobile(requestInfo.agent);
+  process: function(reqInfo) {
+    let mob = new isMobile(reqInfo.agent);
 
     if (mob.any) return false;
 
-    return requestInfo;
+    return reqInfo;
   }
 };
 

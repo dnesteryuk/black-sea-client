@@ -5,21 +5,25 @@ import Client from '../../src/sirko/client';
 
 describe('Client', function() {
   beforeEach(function() {
-    this.requestInfo = {
+    this.reqInfo = {
       agent: 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) ' +
         'Gecko/20100101 Firefox/50.0',
-      currentUrl: 'http://app.io',
+      currentPath: '/',
       domain: 'app.io'
     };
 
-    this.xhr = sinon.useFakeXMLHttpRequest();
+    this.server = sinon.fakeServer.create({autoRespond: true});
 
-    this.xhr.onCreate = function(xhr) { this.request = xhr; }.bind(this);
+    this.respond = (path = '/list') => {
+      this.server.respondWith(
+        /sirko\.io/,
+        [200, {}, path]
+      );
+    };
   });
 
   afterEach(function() {
-    this.request = null;
-    this.xhr.restore();
+    this.server.restore();
 
     sessionStorage.clear();
 
@@ -30,41 +34,97 @@ describe('Client', function() {
 
   describe('.predict', function() {
     it('appends a link tag declaring the browser to prerender the given url', function() {
-      Client.predict('https://sirko.io', this.requestInfo);
+      this.respond();
 
-      this.request.respond(200, {}, '/list');
+      return Client.predict('https://sirko.io', this.reqInfo).then(() => {
+        let link = document.querySelector('link[rel="prerender"]');
 
-      let link = document.querySelector('link[rel="prerender"]');
+        assert(link);
+        assert.equal(link.href, 'http://localhost:9876/list');
+      });
+    });
 
-      assert(link);
-      assert.equal(link.href, 'http://localhost:9876/list');
+    context('it is a first prediction for the user', function() {
+      it('passes undefined as the second element of the resulting array', function() {
+        this.respond();
+
+        return Client.predict('https://sirko.io', this.reqInfo).then((res) => {
+          let [_, isPrevCorrect] = res;
+
+          assert.equal(isPrevCorrect, undefined);
+        });
+      });
+    });
+
+    context('the previous prediction is correct', function() {
+      it('passes true as the second element of the resulting array', function() {
+        sessionStorage.setItem('lastPrediction', '/');
+
+        this.respond();
+
+        return Client.predict('https://sirko.io', this.reqInfo).then((res) => {
+          let [_, isPrevCorrect] = res;
+
+          assert.equal(isPrevCorrect, true);
+        });
+      });
+    });
+
+    context('the previous prediction is incorrect', function() {
+      it('passes false as the second element of the resulting array', function() {
+        sessionStorage.setItem('lastPrediction', '/about');
+
+        this.respond();
+
+        return Client.predict('https://sirko.io', this.reqInfo).then((res) => {
+          let [_, wasPrevCorrect] = res;
+
+          assert.equal(wasPrevCorrect, false);
+        });
+      });
+    });
+
+    context('the engine does not make prediction', function() {
+      beforeEach(function() {
+        this.respond('');
+      });
+
+      it('does not append a link tag', function() {
+        return Client.predict('https://sirko.io', this.reqInfo).then(() => {
+          let link = document.querySelector('link[rel="prerender"]');
+          assert.equal(link, null);
+        });
+      });
     });
 
     context('it is a mobile browser', function() {
       beforeEach(function() {
-        this.requestInfo.agent = 'Mozilla/5.0 (Linux; Android 5.1.1; Nexus 4 Build/LMY48T)' +
+        this.reqInfo.agent = 'Mozilla/5.0 (Linux; Android 5.1.1; Nexus 4 Build/LMY48T)' +
           ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.91 Mobile Safari/537.36';
       });
 
-      it('does not make any request', function() {
-        Client.predict('https://sirko.io', this.requestInfo);
+      it('returns false right away', function() {
+        let res = Client.predict('https://sirko.io', this.reqInfo);
 
-        assert.equal(this.request, null);
+        assert.equal(res, false);
       });
     });
 
     context('the referrer belongs to an external site', function() {
       beforeEach(function() {
-        this.requestInfo.referrer = 'http://www.google.com/some-path';
+        this.reqInfo.referrer = 'http://www.google.com/some-path';
+        this.respond();
       });
 
       it('does not send the referrer', function() {
-        Client.predict('https://sirko.io', this.requestInfo);
+        return Client.predict('https://sirko.io', this.reqInfo).then(() => {
+          let request = this.server.requests[0];
 
-        assert.equal(
-          this.request.url,
-          'https://sirko.io/predict?cur=http%3A%2F%2Fapp.io'
-        );
+          assert.equal(
+            request.url,
+            'https://sirko.io/predict?cur=%2F'
+          );
+        });
       });
     });
   });

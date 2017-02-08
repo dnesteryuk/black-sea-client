@@ -1,52 +1,80 @@
-import Page from './page';
-
 // allow the uglifier to mutilate it
 const sessStorage = window.sessionStorage;
 
+/**
+ * Takes care about HTTP communication via Ajax to the engine.
+ * If the current path hasn't changed (for instance, the user has refreshed the page),
+ * the cached prediction gets returned without making a request to the engine. This approach
+ * helps to avoid needless load on the server and it fixes the issue with increasing
+ * counts of transitions between pages when it mustn't happen.
+ */
 class Predictor {
   constructor(engineUrl) {
     this.engineUrl = engineUrl;
     this.xhr = new XMLHttpRequest();
   }
 
-  predict(currentUrl, referrerUrl) {
+  predict(currentPath, referrerPath) {
+    return new Promise((resolve) => {
+      this._makePrediction(currentPath, referrerPath, resolve);
+    });
+  }
+
+  /**
+   * Returns the prediction which was made for the previous page.
+   */
+  prevPrediction() {
+    return sessStorage.getItem('prevPrediction');
+  }
+
+  /**
+   * Returns the prediction which is made for the current page.
+   */
+  prediction() {
+    return sessStorage.getItem('lastPrediction');
+  }
+
+  _makePrediction(currentPath, referrerPath, resolve) {
     let lastPredictionFor = sessStorage.getItem('lastPredictionFor');
 
-    if (lastPredictionFor === currentUrl) {
-      let lastPredictionPath = sessStorage.getItem('lastPrediction');
-
-      Page.appendLink('prerender', lastPredictionPath);
+    if (lastPredictionFor === currentPath) {
+      resolve(this.prediction());
     }
     else {
-      sessStorage.setItem('lastPredictionFor', currentUrl);
-
       this.xhr.withCredentials = true;
-      this.xhr.open('GET', this._predictorUrl(currentUrl, referrerUrl));
-      this.xhr.onload = this._madePrediction.bind(this);
+      this.xhr.open('GET', this._predictorUrl(currentPath, referrerPath));
+
+      this.xhr.onload = function() {
+        sessStorage.setItem('lastPredictionFor', currentPath);
+
+        this._madePrediction();
+        resolve(this.prediction());
+      }.bind(this);
+
       this.xhr.send();
     }
   }
 
   _madePrediction() {
     let nextPath = this.xhr.response;
-    this._appendLink(nextPath);
+
+    if (sessStorage.getItem('lastPrediction')) {
+      sessStorage.setItem(
+        'prevPrediction',
+        sessStorage.getItem('lastPrediction')
+      );
+    }
 
     sessStorage.setItem('lastPrediction', nextPath);
   }
 
-  _appendLink(nextPath) {
-    if (!nextPath) return;
-
-    Page.appendLink('prerender', nextPath);
-  }
-
-  _predictorUrl(currentUrl, referrerUrl) {
-    let current  = encodeURIComponent(currentUrl);
-    let referrer = encodeURIComponent(referrerUrl);
+  _predictorUrl(currentPath, referrerPath) {
+    let current  = encodeURIComponent(currentPath);
+    let referrer = encodeURIComponent(referrerPath);
 
     let url = `${this.engineUrl}/predict?cur=${current}`;
 
-    if (referrerUrl) url = url + `&ref=${referrer}`;
+    if (referrerPath) url = url + `&ref=${referrer}`;
 
     return url;
   }

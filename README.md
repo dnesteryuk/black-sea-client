@@ -16,8 +16,9 @@ First of all, add the following code before `</head>`:
 
 ```html
 <script>
-  window.sirko=window.sirko||{};
-  sirko.s={engineUrl: 'http://__URL_TO_ENGINE__'}; // replace with a real url
+  (function(w,m){w[m]=function(){w[m].q.push(arguments);};w[m].q=[];})(window,'sirko');
+
+  sirko('engineUrl', 'http://__URL_TO_ENGINE__'); // replace with a real url
 </script>
 ```
 

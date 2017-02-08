@@ -17,10 +17,6 @@ describe('Predictor', function() {
     this.xhr.restore();
 
     sessionStorage.clear();
-
-    let link = document.querySelector('link[rel="prerender"]');
-
-    if (link) link.parentNode.removeChild(link);
   });
 
   describe('#predict', function() {
@@ -34,59 +30,55 @@ describe('Predictor', function() {
 
     context('the referrer is present', function() {
       it('includes the referrer', function() {
-        this.predictor.predict('http://app.io', 'http://app.io/index');
+        this.predictor.predict('/', '/index');
 
         assert.equal(
           this.request.url,
           'https://sirko.io/predict?' +
-          'cur=http%3A%2F%2Fapp.io&' +
-          'ref=http%3A%2F%2Fapp.io%2Findex'
+          'cur=%2F&' +
+          'ref=%2Findex'
         );
       });
     });
 
-    it('appends a link tag declaring the browser to prerender the given url', function() {
-      this.predictor.predict('http://app.io');
+    it('resolves the promise once the prediction get received', function(done) {
+      this.predictor.predict('/').then(val => {
+        assert.equal(val, '/list');
+        done();
+      });
 
       this.request.respond(200, {}, '/list');
-
-      let link = document.querySelector('link[rel="prerender"]');
-
-      assert(link);
-      assert.equal(link.href, 'http://localhost:9876/list');
     });
 
-    context('the engine does not make prediction', function() {
-      it('does not append a link tag', function() {
-        this.predictor.predict('http://app.io');
+    it('keeps the previous prediction', function(done) {
+      let prevPrediction = '/reports';
 
-        this.request.respond(200, {}, '');
+      sessionStorage.setItem('lastPrediction', prevPrediction);
 
-        let link = document.querySelector('link[rel="prerender"]');
-
-        assert.equal(link, null);
+      this.predictor.predict('/').then(val => {
+        assert.equal(this.predictor.prevPrediction(), prevPrediction);
+        done();
       });
+
+      this.request.respond(200, {}, '/list');
     });
 
     context('the page gets reloaded', function() {
       beforeEach(function() {
         sessionStorage.setItem('lastPrediction', '/reports');
-        sessionStorage.setItem('lastPredictionFor', 'http://app.io');
+        sessionStorage.setItem('lastPredictionFor', '/');
       });
 
       it('does not make a request to the engine', function() {
-        this.predictor.predict('http://app.io');
+        this.predictor.predict('/');
 
         assert.equal(this.request.url, null);
       });
 
-      it('appends a link tag declaring the browser to prerender the stored url', function() {
-        this.predictor.predict('http://app.io');
-
-        let link = document.querySelector('link[rel="prerender"]');
-
-        assert(link);
-        assert.equal(link.href, 'http://localhost:9876/reports');
+      it('resolves the promise with the cached prediction for this page', function() {
+        return this.predictor.predict('/').then((prediction) => {
+          assert.equal(prediction, '/reports');
+        });
       });
     });
   });

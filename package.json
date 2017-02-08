@@ -9,7 +9,10 @@
   "devDependencies": {
     "babel-core": "^6.22.1",
     "babel-loader": "^6.2.10",
+    "babel-plugin-es6-promise": "^1.1.1",
     "babel-preset-es2015": "^6.22.0",
+    "es6-promise": "^4.0.5",
+    "ismobilejs": "^0.4.0",
     "karma": "^1.4.1",
     "karma-chrome-launcher": "^2.0.0",
     "karma-firefox-launcher": "^1.0.0",
@@ -17,8 +20,7 @@
     "karma-webpack": "^2.0.2",
     "mocha": "^3.2.0",
     "sinon": "2.0.0-pre.3",
-    "webpack": "^2.2.1",
-    "ismobilejs": "^0.4.0"
+    "webpack": "^2.2.1"
   },
   "scripts": {
     "start": "NODE_ENV=dev webpack",

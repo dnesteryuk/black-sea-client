@@ -2,6 +2,7 @@ import Page from './page';
 import Predictor from './predictor';
 import MobilePreprocessor from './preprocessors/mobile';
 import ReferrerPreprocessor from './preprocessors/referrer';
+import PathCleanerPreprocessor from './preprocessors/path_cleaner';
 
 /**
  * This object tracks the current page visited by a particular user
@@ -10,35 +11,63 @@ import ReferrerPreprocessor from './preprocessors/referrer';
 const Client = {
   preprocessors: [
     MobilePreprocessor,
-    ReferrerPreprocessor
+    ReferrerPreprocessor,
+    PathCleanerPreprocessor
   ],
 
-  predict: function(engineUrl, requestInfo) {
-    requestInfo = this._preprocess(requestInfo);
+  _listeners: [],
 
-    if(!requestInfo) return false;
+  predict: function(engineUrl, reqInfo) {
+    reqInfo = this._preprocess(reqInfo);
+
+    if(!reqInfo) return false;
 
     let predictor = new Predictor(engineUrl);
 
     // don't try to prerender a page if the current page
-    // is prerendered. Otherwise, it leads to prerendering
+    // isn't visible yet. Otherwise, it leads to prerendering
     // a chain of pages for one request.
-    Page.onceVisible(
-      () => predictor.predict(requestInfo.currentUrl, requestInfo.referrer)
-    );
+    let promise = Page.onceVisible().then(() => {
+      return predictor.predict(
+        reqInfo.currentPath,
+        reqInfo.referrer
+      );
+    }).then((prediction) => {
+      this._appendLink(prediction);
+
+      let isPrevCorrect;
+
+      if (predictor.prevPrediction()) {
+        // check either the previous prediction is correct or not.
+        // This info is useful to track accuracy of predictions.
+        isPrevCorrect = predictor.prevPrediction() == reqInfo.currentPath;
+      }
+
+      return new Promise((resolve) => {
+        resolve([prediction, isPrevCorrect]);
+      });
+    });
+
+    return promise;
   },
 
   /**
    * Runs preprocessors which may change the request info or
    * tell the client to not make prediction by returning false or null.
    */
-  _preprocess: function(requestInfo) {
+  _preprocess: function(reqInfo) {
     for (let processor of this.preprocessors) {
-      requestInfo = processor.process(requestInfo);
-      if (!requestInfo) return false;
+      reqInfo = processor.process(reqInfo);
+      if (!reqInfo) return false;
     }
 
-    return requestInfo;
+    return reqInfo;
+  },
+
+  _appendLink(nextPath) {
+    if (!nextPath) return;
+
+    Page.appendLink('prerender', nextPath);
   }
 };
 
