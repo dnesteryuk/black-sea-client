@@ -38,7 +38,7 @@ class Predictor {
     let lastPredictionFor = sessStorage.getItem('lastPredictionFor');
 
     if (lastPredictionFor === currentPath) {
-      resolve(this.prediction());
+      resolve([this.prediction(), true]);
     }
     else {
       this.xhr.withCredentials = true;
@@ -48,7 +48,7 @@ class Predictor {
         sessStorage.setItem('lastPredictionFor', currentPath);
 
         this._madePrediction();
-        resolve(this.prediction());
+        resolve([this.prediction(), false]);
       }.bind(this);
 
       this.xhr.send();
@@ -58,11 +58,18 @@ class Predictor {
   _madePrediction() {
     let nextPath = this.xhr.response;
 
-    if (sessStorage.getItem('lastPrediction')) {
+    // it is empty if there isn't a prediction for the previous request
+    let lastPrediction = sessStorage.getItem('lastPrediction');
+
+    if (lastPrediction) {
       sessStorage.setItem(
         'prevPrediction',
-        sessStorage.getItem('lastPrediction')
+        lastPrediction
       );
+    }
+    else {
+      // it must be undefined if there isn't a prediction
+      sessStorage.removeItem('prevPrediction');
     }
 
     sessStorage.setItem('lastPrediction', nextPath);

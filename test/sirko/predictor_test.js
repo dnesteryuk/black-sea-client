@@ -42,8 +42,11 @@ describe('Predictor', function() {
     });
 
     it('resolves the promise once the prediction get received', function(done) {
-      this.predictor.predict('/').then(val => {
-        assert.equal(val, '/list');
+      this.predictor.predict('/').then((res) => {
+        let [prediction, fromCache] = res;
+
+        assert.equal(prediction, '/list');
+        assert.equal(fromCache, false);
         done();
       });
 
@@ -63,6 +66,19 @@ describe('Predictor', function() {
       this.request.respond(200, {}, '/list');
     });
 
+    context('the engine did not make a prediction for the previous request', function() {
+      it('resets the previous prediction', function(done) {
+        sessionStorage.setItem('lastPrediction', '');
+
+        this.predictor.predict('/').then(val => {
+          assert.equal(this.predictor.prevPrediction(), undefined);
+          done();
+        });
+
+        this.request.respond(200, {}, '/list');
+      });
+    });
+
     context('the page gets reloaded', function() {
       beforeEach(function() {
         sessionStorage.setItem('lastPrediction', '/reports');
@@ -76,8 +92,11 @@ describe('Predictor', function() {
       });
 
       it('resolves the promise with the cached prediction for this page', function() {
-        return this.predictor.predict('/').then((prediction) => {
+        return this.predictor.predict('/').then((res) => {
+          let [prediction, fromCache] = res;
+
           assert.equal(prediction, '/reports');
+          assert.equal(fromCache, true);
         });
       });
     });

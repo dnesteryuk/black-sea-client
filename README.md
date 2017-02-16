@@ -1,6 +1,6 @@
 # Sirko Client
 
-[![Build Status](https://travis-ci.org/dnesteryuk/sirko-client.svg?branch=master)](https://travis-ci.org/dnesteryuk/sirko-client)
+[![Build Status](https://travis-ci.org/sirko-io/client.svg?branch=master)](https://travis-ci.org/sirko-io/client)
 
 It is a JavaScript client for the [Sirko Engine](https://github.com/dnesteryuk/sirko-engine). This client tracks information about navigation of users on a site and gets prediction from the engine in order to give a hint to the browser about the next page which most likely will be visited by the current user.
 

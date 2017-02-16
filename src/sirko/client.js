@@ -32,13 +32,19 @@ const Client = {
         reqInfo.currentPath,
         reqInfo.referrer
       );
-    }).then((prediction) => {
+    }).then((res) => {
+      let [prediction, fromCache] = res;
+
       this._appendLink(prediction);
 
       let isPrevCorrect;
 
-      if (predictor.prevPrediction()) {
-        // check either the previous prediction is correct or not.
+      // If the prediction is received from the cache, the user's callback shouldn't
+      // track the prediction again, it was already tracked. Performing this check,
+      // we make sure an external tracking service integrated by the user receives
+      // only unique predictions.
+      if (!fromCache && predictor.prevPrediction()) {
+        // check whether the previous prediction is correct or not.
         // This info is useful to track accuracy of predictions.
         isPrevCorrect = predictor.prevPrediction() == reqInfo.currentPath;
       }

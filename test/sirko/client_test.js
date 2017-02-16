@@ -44,7 +44,7 @@ describe('Client', function() {
       });
     });
 
-    context('it is a first prediction for the user', function() {
+    context('there is not a prediction for the previous request', function() {
       it('passes undefined as the second element of the resulting array', function() {
         this.respond();
 
@@ -80,6 +80,21 @@ describe('Client', function() {
           let [_, wasPrevCorrect] = res;
 
           assert.equal(wasPrevCorrect, false);
+        });
+      });
+    });
+
+    context('the current prediction is taken from the cache', function() {
+      it('passes undefined as the second element of the resulting array', function() {
+        sessionStorage.setItem('lastPrediction', '/about');
+        sessionStorage.setItem('lastPredictionFor', this.reqInfo.currentPath);
+
+        this.respond();
+
+        return Client.predict('https://sirko.io', this.reqInfo).then((res) => {
+          let [_, wasPrevCorrect] = res;
+
+          assert.equal(wasPrevCorrect, undefined);
         });
       });
     });
