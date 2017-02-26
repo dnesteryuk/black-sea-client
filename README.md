@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/sirko-io/client.svg?branch=master)](https://travis-ci.org/sirko-io/client)
 
-It is a JavaScript client for the [Sirko Engine](https://github.com/dnesteryuk/sirko-engine). This client tracks information about navigation of users on a site and gets prediction from the engine in order to give a hint to the browser about the next page which most likely will be visited by the current user.
+It is a JavaScript client for the [Sirko Engine](https://github.com/sirko-io/engine). This client tracks information about navigation of users on a site and gets prediction from the engine in order to give a hint to the browser about the next page which most likely will be visited by the current user.
 
 A full description of the prerendering idea can be found in [this article](http://nesteryuk.info/2016/09/27/prerendering-pages-in-browsers.html).
 
@@ -51,4 +51,4 @@ It builds the `dist/sirko.js` script which should be included into the site.
 
 ## License
 
-The library is distributed under the [GPLv3 license](https://github.com/dnesteryuk/sirko-client/blob/master/LICENSE.txt).
+The library is distributed under the [GPLv3 license](https://github.com/sirko-io/client/blob/master/LICENSE.txt).

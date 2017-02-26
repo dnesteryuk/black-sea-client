@@ -1,5 +1,5 @@
 {
-  "name": "sirko-client",
+  "name": "sirko",
   "version": "0.0.1",
   "description": "The client for the sirko engine making predictions about users' navigation.",
   "main": "dist/sirko.js",
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dnesteryuk/sirko-client.git"
+    "url": "git+https://github.com/sirko-io/client.git"
   },
   "keywords": [
     "predict",
@@ -44,7 +44,7 @@
   },
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/dnesteryuk/sirko-client/issues"
+    "url": "https://github.com/sirko-io/client/issues"
   },
-  "homepage": "https://github.com/dnesteryuk/sirko-client#readme"
+  "homepage": "https://github.com/sirko-io/client#readme"
 }
