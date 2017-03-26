@@ -15,7 +15,7 @@ if (sirko) {
 
   // fill settings from the queue
   sirko.q.forEach((args) => {
-    let [field, val] = args;
+    let field = args[0], val = args[1];
     clientObj[field] = val;
   });
 

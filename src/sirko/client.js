@@ -33,7 +33,7 @@ const Client = {
         reqInfo.referrer
       );
     }).then((res) => {
-      let [prediction, fromCache] = res;
+      let prediction = res[0], fromCache = res[1];
 
       this._appendLink(prediction);
 
@@ -62,7 +62,9 @@ const Client = {
    * tell the client to not make prediction by returning false or null.
    */
   _preprocess: function(reqInfo) {
-    for (let processor of this.preprocessors) {
+    for (let i = 0; i < this.preprocessors.length; i++) {
+      let processor = this.preprocessors[i];
+
       reqInfo = processor.process(reqInfo);
       if (!reqInfo) return false;
     }
