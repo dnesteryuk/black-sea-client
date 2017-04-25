@@ -33,7 +33,7 @@ if (sirko) {
     }
   };
 
-  Client.predict(clientObj.engineUrl, reqInfo).then((res) => {
+  Client.predict(reqInfo, clientObj).then((res) => {
     // the user's callback is here
     if (clientObj.predicted) {
       clientObj.predicted.apply(this, res);

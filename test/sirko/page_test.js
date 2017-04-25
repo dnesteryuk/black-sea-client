@@ -1,12 +1,12 @@
 import assert from 'assert';
+import helpers from '../helpers';
 
 import Page from '../../src/sirko/page';
 
 describe('Page', function() {
   describe('.appendLink', function() {
     afterEach(function() {
-      let link = document.querySelector('link[rel="prerender"]');
-      link.parentNode.removeChild(link);
+      helpers.removeHint();
     });
 
     it('appends a link tag into the DOM', function() {

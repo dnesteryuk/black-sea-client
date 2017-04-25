@@ -3,7 +3,7 @@ var webpackConfig = require('./webpack.config.js');
 delete webpackConfig.entry;
 
 module.exports = function(config) {
-  var browsers = ['Chrome'];
+  var browsers = ['Chrome', 'Firefox'];
 
   if (process.env.TRAVIS) {
     browsers = ['Firefox'];
