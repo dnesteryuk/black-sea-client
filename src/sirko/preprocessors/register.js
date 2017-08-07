@@ -1,13 +1,9 @@
 /**
- * Registers a service worker if the browser doesn't support
- * the prerender hint. The registered service worker provides
- * a fallback solution.
+ * Registers a service worker to prefetch a predicted page.
  */
-const Fallback = {
-  process: function(reqInfo, conf) {
-    if (reqInfo.hint === 'fallback' &&
-      conf.useFallback &&
-      ('serviceWorker' in navigator)) {
+const Register = {
+  process: function(reqInfo) {
+    if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sirko_sw.js');
 
       /**
@@ -22,4 +18,4 @@ const Fallback = {
   }
 };
 
-export default Fallback;
+export default Register;

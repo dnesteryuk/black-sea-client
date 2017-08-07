@@ -16,8 +16,8 @@ const Helpers = {
     return /Firefox/.test(userAgent)
   },
 
-  removeHint: function() {
-    let link = document.querySelector('link[rel="prerender"]');
+  removeHint: function(rel) {
+    let link = document.querySelector(`link[rel="${rel}"]`);
     if (link) link.parentNode.removeChild(link);
   }
 };

@@ -20,7 +20,7 @@ if (sirko) {
   });
 
   // replace the original function with the function which
-  // takes care about storing settings after loading the lib
+  // takes care of storing settings after loading the lib
   window.sirko = function(name, val) {
     // the user asks for prediction when the prediction
     // has been already made

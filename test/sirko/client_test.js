@@ -31,23 +31,9 @@ describe('Client', function() {
     this.server.restore();
 
     sessionStorage.clear();
-    helpers.removeHint();
   });
 
   describe('.predict', function() {
-    if (helpers.isChrome()) {
-      it('appends a link tag declaring the browser to prerender the given url', function() {
-        this.respond();
-
-        return Client.predict(this.reqInfo, this.conf).then(() => {
-          let link = document.querySelector(`link[rel="prerender"]`);
-
-          assert(link);
-          assert.equal(link.href, 'http://localhost:9876/list');
-        });
-      });
-    }
-
     context('there was no prediction for the previous request', function() {
       it('passes undefined as the second element of the resulting array', function() {
         this.respond();

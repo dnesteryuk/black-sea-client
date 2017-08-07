@@ -2,9 +2,7 @@
 
 [![Build Status](https://travis-ci.org/sirko-io/client.svg?branch=master)](https://travis-ci.org/sirko-io/client)
 
-It is a JavaScript client for the [Sirko Engine](https://github.com/sirko-io/engine). This client tracks information about navigation of users on a site and gets prediction from the engine in order to give a hint to the browser about the next page which most likely will be visited by the current user.
-
-A full description of the prerendering idea can be found in [this article](http://nesteryuk.info/2016/09/27/prerendering-pages-in-browsers.html).
+It is a JavaScript client for the [Sirko Engine](https://github.com/sirko-io/engine). This client tracks information about navigation of users on a site and gets prediction from the engine in order to prefetch the next page which most likely will be visited by the current user.
 
 [Try demo](http://demo.sirko.io)
 
@@ -39,7 +37,7 @@ This command launches Webpack in the development mode (all scripts get recompile
 $ npm test
 ```
 
-It will launch the Chrome browser and keep it running to re-launch tests when the code get changed.
+It will launch the Chrome and Firefox browsers and keep them running to re-launch tests when the code gets changed.
 
 ### Production build
 

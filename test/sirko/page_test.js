@@ -6,16 +6,16 @@ import Page from '../../src/sirko/page';
 describe('Page', function() {
   describe('.appendLink', function() {
     afterEach(function() {
-      helpers.removeHint();
+      helpers.removeHint('prefetch');
     });
 
     it('appends a link tag into the DOM', function() {
-      Page.appendLink('prerender', '/list');
+      Page.appendLink('prefetch', '/js/app.js');
 
-      let link = document.querySelector('link[rel="prerender"]');
+      let link = document.querySelector('link[rel="prefetch"]');
 
       assert(link);
-      assert.equal(link.href, 'http://localhost:9876/list');
+      assert.equal(link.href, 'http://localhost:9876/js/app.js');
     });
   });
 });

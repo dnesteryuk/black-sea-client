@@ -1,24 +1,22 @@
 import MobilePreprocessor from './preprocessors/mobile';
+import PromiseSupportPreprocessor from './preprocessors/promise_support';
+import RegisterPreprocessor from './preprocessors/register';
 import ReferrerPreprocessor from './preprocessors/referrer';
 import PathCleanerPreprocessor from './preprocessors/path_cleaner';
-import HintSupportPreprocessor from './preprocessors/hint_support';
-import FallbackPreprocessor from './preprocessors/fallback';
 
-import PrerenderPostprocessor from './postprocessors/prerender';
-import FallbackPostprocessor from './postprocessors/fallback';
+import PagePostprocessor from './postprocessors/page';
 
 const Processor = {
   preprocessors: [
     MobilePreprocessor,
+    PromiseSupportPreprocessor,
+    RegisterPreprocessor,
     ReferrerPreprocessor,
-    PathCleanerPreprocessor,
-    HintSupportPreprocessor,
-    FallbackPreprocessor
+    PathCleanerPreprocessor
   ],
 
   postprocessors: [
-    PrerenderPostprocessor,
-    FallbackPostprocessor
+    PagePostprocessor
   ],
 
   /**
