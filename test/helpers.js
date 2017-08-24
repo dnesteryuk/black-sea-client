@@ -16,9 +16,13 @@ const Helpers = {
     return /Firefox/.test(userAgent)
   },
 
-  removeHint: function(rel) {
-    let link = document.querySelector(`link[rel="${rel}"]`);
-    if (link) link.parentNode.removeChild(link);
+  /**
+   * Removes all link tags related to the given relationship.
+   */
+  removeHints: function(rel) {
+    document.querySelectorAll(`link[rel="${rel}"]`).forEach(
+      (link) => { link.parentNode.removeChild(link) }
+    );
   }
 };
 

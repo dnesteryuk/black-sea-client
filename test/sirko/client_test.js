@@ -3,6 +3,7 @@ import sinon from 'sinon';
 import helpers from '../helpers';
 
 import Client from '../../src/sirko/client';
+import Storage from '../../src/sirko/storage';
 
 describe('Client', function() {
   beforeEach(function() {
@@ -22,70 +23,25 @@ describe('Client', function() {
     this.respond = (path = '/list') => {
       this.server.respondWith(
         /sirko\.io/,
-        [200, {}, path]
+        [200, {}, JSON.stringify({path: path, assets: []})]
       );
     };
   });
 
   afterEach(function() {
     this.server.restore();
-
-    sessionStorage.clear();
+    Storage.clear();
   });
 
   describe('.predict', function() {
-    context('there was no prediction for the previous request', function() {
-      it('passes undefined as the second element of the resulting array', function() {
-        this.respond();
+    it('resolves the given promise', function() {
+      this.respond();
 
-        return Client.predict(this.reqInfo, this.conf).then((res) => {
-          let [_, isPrevCorrect] = res;
+      return Client.predict(this.reqInfo, this.conf).then((res) => {
+        let [predictedPath, wasPrevCorrect] = res;
 
-          assert.equal(isPrevCorrect, undefined);
-        });
-      });
-    });
-
-    context('the previous prediction was correct', function() {
-      it('passes true as the second element of the resulting array', function() {
-        sessionStorage.setItem('lastPrediction', '/');
-
-        this.respond();
-
-        return Client.predict(this.reqInfo, this.conf).then((res) => {
-          let [_, isPrevCorrect] = res;
-
-          assert.equal(isPrevCorrect, true);
-        });
-      });
-    });
-
-    context('the previous prediction was incorrect', function() {
-      it('passes false as the second element of the resulting array', function() {
-        sessionStorage.setItem('lastPrediction', '/about');
-
-        this.respond();
-
-        return Client.predict(this.reqInfo, this.conf).then((res) => {
-          let [_, wasPrevCorrect] = res;
-
-          assert.equal(wasPrevCorrect, false);
-        });
-      });
-    });
-
-    context('the current prediction is taken from the cache', function() {
-      it('passes undefined as the second element of the resulting array', function() {
-        sessionStorage.setItem('lastPrediction', '/about');
-        sessionStorage.setItem('lastPredictionFor', this.reqInfo.currentPath);
-
-        this.respond();
-
-        return Client.predict(this.reqInfo, this.conf).then((res) => {
-          let [_, wasPrevCorrect] = res;
-
-          assert.equal(wasPrevCorrect, undefined);
-        });
+        assert.equal(predictedPath, '/list');
+        assert.equal(wasPrevCorrect, undefined);
       });
     });
 
@@ -113,8 +69,8 @@ describe('Client', function() {
           let request = this.server.requests[0];
 
           assert.equal(
-            request.url,
-            'https://sirko.io/predict?cur=%2F'
+            JSON.parse(request.requestBody).referrer,
+            undefined
           );
         });
       });

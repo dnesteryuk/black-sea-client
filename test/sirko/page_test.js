@@ -6,7 +6,7 @@ import Page from '../../src/sirko/page';
 describe('Page', function() {
   describe('.appendLink', function() {
     afterEach(function() {
-      helpers.removeHint('prefetch');
+      helpers.removeHints('prefetch');
     });
 
     it('appends a link tag into the DOM', function() {

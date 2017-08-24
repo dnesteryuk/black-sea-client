@@ -10,95 +10,78 @@ describe('Predictor', function() {
     this.xhr.onCreate = function(xhr) { this.request = xhr; }.bind(this);
 
     this.predictor = new Predictor('https://sirko.io');
+
+    this.entry = {
+      currentPath: '/',
+      assets:      ['/js/main.js']
+    };
+
+    this.subbedPrediction = {
+      path:   '/list',
+      assets: ['/js/form.js']
+    };
+
+    this.respond = () => {
+      this.request.respond(
+        200,
+        {},
+        JSON.stringify(this.subbedPrediction)
+      );
+    };
   });
 
   afterEach(function() {
     this.request = null;
     this.xhr.restore();
-
-    sessionStorage.clear();
   });
 
   describe('#predict', function() {
     it('makes a request to the engine', function() {
-      this.predictor.predict('http://app.io');
+      this.predictor.predict(this.entry);
 
       assert(this.request);
-      assert.equal(this.request.method, 'GET');
-      assert.equal(this.request.url, 'https://sirko.io/predict?cur=http%3A%2F%2Fapp.io');
+      assert.equal(this.request.method, 'POST');
+      assert.equal(this.request.url, 'https://sirko.io/predict');
+
+      let expectedBody = JSON.stringify({
+        current: this.entry.currentPath,
+        assets:  this.entry.assets
+      });
+
+      assert.equal(
+        this.request.requestBody,
+        expectedBody
+      );
     });
 
     context('the referrer is present', function() {
       it('includes the referrer', function() {
-        this.predictor.predict('/', '/index');
+        this.entry.referrerPath = '/index';
+
+        this.predictor.predict(this.entry);
+
+        let expectedBody = JSON.stringify({
+          current:  this.entry.currentPath,
+          assets:   this.entry.assets,
+          referrer: this.entry.referrerPath
+        });
 
         assert.equal(
-          this.request.url,
-          'https://sirko.io/predict?' +
-          'cur=%2F&' +
-          'ref=%2Findex'
+          this.request.requestBody,
+          expectedBody
         );
       });
     });
 
-    it('resolves the promise once the prediction get received', function(done) {
-      this.predictor.predict('/').then((res) => {
-        let [prediction, fromCache] = res;
+    it('resolves the promise once the prediction gets received', function(done) {
+      this.predictor.predict(this.entry).then((prediction) => {
+        assert.equal(prediction.path, this.subbedPrediction.path);
+        assert.equal(prediction.assets[0], this.subbedPrediction.assets[0]);
 
-        assert.equal(prediction, '/list');
-        assert.equal(fromCache, false);
         done();
       });
 
-      this.request.respond(200, {}, '/list');
-    });
-
-    it('keeps the previous prediction', function(done) {
-      let prevPrediction = '/reports';
-
-      sessionStorage.setItem('lastPrediction', prevPrediction);
-
-      this.predictor.predict('/').then(val => {
-        assert.equal(this.predictor.prevPrediction(), prevPrediction);
-        done();
-      });
-
-      this.request.respond(200, {}, '/list');
-    });
-
-    context('the engine did not make a prediction for the previous request', function() {
-      it('resets the previous prediction', function(done) {
-        sessionStorage.setItem('lastPrediction', '');
-
-        this.predictor.predict('/').then(val => {
-          assert.equal(this.predictor.prevPrediction(), undefined);
-          done();
-        });
-
-        this.request.respond(200, {}, '/list');
-      });
-    });
-
-    context('the page gets reloaded', function() {
-      beforeEach(function() {
-        sessionStorage.setItem('lastPrediction', '/reports');
-        sessionStorage.setItem('lastPredictionFor', '/');
-      });
-
-      it('does not make a request to the engine', function() {
-        this.predictor.predict('/');
-
-        assert.equal(this.request.url, null);
-      });
-
-      it('resolves the promise with the cached prediction for this page', function() {
-        return this.predictor.predict('/').then((res) => {
-          let [prediction, fromCache] = res;
-
-          assert.equal(prediction, '/reports');
-          assert.equal(fromCache, true);
-        });
-      });
+      this.respond();
     });
   });
 });

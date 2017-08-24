@@ -1,12 +1,5 @@
-// allow the uglifier to mutilate it
-const sessStorage = window.sessionStorage;
-
 /**
  * Takes care about HTTP communication via Ajax to the engine.
- * If the current path hasn't changed (for instance, the user has refreshed the page),
- * the cached prediction gets returned without making a request to the engine. This approach
- * helps to avoid needless load on the server and it fixes the issue with increasing
- * counts of transitions between pages when it mustn't happen.
  */
 class Predictor {
   constructor(engineUrl) {
@@ -14,76 +7,47 @@ class Predictor {
     this.xhr = new XMLHttpRequest();
   }
 
-  predict(currentPath, referrerPath) {
+  /**
+   * Makes a request to the engine in order to get info about a next page.
+   *
+   * entry - The object keeping information about the current page.
+   *   currentPath:  - The path of the current page.
+   *   referrerPath: - The path of the referrer which leads to the current page.
+   *   assets:       - The list of JS and CSS files on the current page.
+   */
+  predict(entry) {
     return new Promise((resolve) => {
-      this._makePrediction(currentPath, referrerPath, resolve);
+      this._makePrediction(entry, resolve);
     });
   }
 
-  /**
-   * Returns the prediction which was made for the previous page.
-   */
-  prevPrediction() {
-    return sessStorage.getItem('prevPrediction');
+  _makePrediction(entry, resolve) {
+    this.xhr.withCredentials = true;
+    this.xhr.open('POST', this._predictorUrl());
+    this.xhr.setRequestHeader('Content-Type', 'application/json');
+
+    this.xhr.onload = () => {
+      resolve(JSON.parse(this.xhr.response));
+    };
+
+    this.xhr.send(this._requestBody(entry));
   }
 
-  /**
-   * Returns the prediction which is made for the current page.
-   */
-  prediction() {
-    return sessStorage.getItem('lastPrediction');
-  }
-
-  _makePrediction(currentPath, referrerPath, resolve) {
-    let lastPredictionFor = sessStorage.getItem('lastPredictionFor');
-
-    if (lastPredictionFor === currentPath) {
-      resolve([this.prediction(), true]);
-    }
-    else {
-      this.xhr.withCredentials = true;
-      this.xhr.open('GET', this._predictorUrl(currentPath, referrerPath));
-
-      this.xhr.onload = function() {
-        sessStorage.setItem('lastPredictionFor', currentPath);
-
-        this._madePrediction();
-        resolve([this.prediction(), false]);
-      }.bind(this);
-
-      this.xhr.send();
-    }
-  }
-
-  _madePrediction() {
-    let nextPath = this.xhr.response;
-
-    // it is empty if there isn't a prediction for the previous request
-    let lastPrediction = sessStorage.getItem('lastPrediction');
-
-    if (lastPrediction) {
-      sessStorage.setItem(
-        'prevPrediction',
-        lastPrediction
-      );
-    }
-    else {
-      // it must be undefined if there isn't a prediction
-      sessStorage.removeItem('prevPrediction');
-    }
-
-    sessStorage.setItem('lastPrediction', nextPath);
-  }
-
-  _predictorUrl(currentPath, referrerPath) {
-    let current  = encodeURIComponent(currentPath);
-    let referrer = encodeURIComponent(referrerPath);
-
-    let url = `${this.engineUrl}/predict?cur=${current}`;
-
-    if (referrerPath) url = url + `&ref=${referrer}`;
+  _predictorUrl() {
+    let url = `${this.engineUrl}/predict`;
 
     return url;
+  }
+
+  _requestBody(entry) {
+    let data = {
+      current: entry.currentPath,
+      assets:  entry.assets
+    };
+
+    if (entry.referrerPath) data.referrer = entry.referrerPath;
+
+    return JSON.stringify(data);
   }
 }
 

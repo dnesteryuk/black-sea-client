@@ -3,8 +3,13 @@ import PromiseSupportPreprocessor from './preprocessors/promise_support';
 import RegisterPreprocessor from './preprocessors/register';
 import ReferrerPreprocessor from './preprocessors/referrer';
 import PathCleanerPreprocessor from './preprocessors/path_cleaner';
+import CachePreprocessor from './preprocessors/cache';
+import AssetsPreprocessor from './preprocessors/assets';
 
 import PagePostprocessor from './postprocessors/page';
+import AssetsPostprocessor from './postprocessors/assets';
+import CachePostprocessor from './postprocessors/cache';
+import CorrectnessPostprocessor from './postprocessors/correctness';
 
 const Processor = {
   preprocessors: [
@@ -12,11 +17,16 @@ const Processor = {
     PromiseSupportPreprocessor,
     RegisterPreprocessor,
     ReferrerPreprocessor,
-    PathCleanerPreprocessor
+    PathCleanerPreprocessor,
+    CachePreprocessor,
+    AssetsPreprocessor
   ],
 
   postprocessors: [
-    PagePostprocessor
+    PagePostprocessor,
+    AssetsPostprocessor,
+    CachePostprocessor,
+    CorrectnessPostprocessor
   ],
 
   /**
@@ -28,10 +38,11 @@ const Processor = {
   },
 
   /**
-   * Runs postprocessors to hint the browser about the predicted page.
+   * Runs postprocessors to hint the browser about the predicted page
+   * and assets to that page.
    */
-  postprocess: function(result, conf) {
-    this._runProcessors(this.postprocessors, result, conf);
+  postprocess: function(resp, reqInfo, conf) {
+    return this._runProcessors(this.postprocessors, resp, reqInfo, conf);
   },
 
   _runProcessors: function(processors, info, conf) {
