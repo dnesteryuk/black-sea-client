@@ -1,5 +1,3 @@
-import assert from 'assert';
-
 import Page from '../../../src/sirko/postprocessors/page';
 
 describe('Page', function() {

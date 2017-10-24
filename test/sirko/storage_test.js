@@ -1,5 +1,3 @@
-import assert from 'assert';
-
 import Storage from '../../src/sirko/storage';
 
 const sessStorage = window.sessionStorage;

@@ -1,5 +1,3 @@
-import assert from 'assert';
-
 import Assets from '../../../src/sirko/postprocessors/assets';
 import Helpers from '../../helpers';
 

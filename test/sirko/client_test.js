@@ -1,7 +1,6 @@
-import assert from 'assert';
 import sinon from 'sinon';
-import helpers from '../helpers';
 
+import helpers from '../helpers';
 import Client from '../../src/sirko/client';
 import Storage from '../../src/sirko/storage';
 

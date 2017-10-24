@@ -1,5 +1,3 @@
-import assert from 'assert';
-
 import Cache from '../../../src/sirko/preprocessors/cache';
 import Storage from '../../../src/sirko/storage';
 

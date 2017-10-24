@@ -2,18 +2,19 @@
 
 [![Build Status](https://travis-ci.org/sirko-io/client.svg?branch=master)](https://travis-ci.org/sirko-io/client)
 
-It is a JavaScript client for the [Sirko Engine](https://github.com/sirko-io/engine). This client tracks information about navigation of users on a site and gets prediction from the engine in order to prefetch the next page which most likely will be visited by the current user.
+It is a JavaScript client for the [Sirko Engine](https://github.com/sirko-io/engine). This client tracks information about navigation of users on a site and gets prediction from the engine in order to improve performance of the site by prefetching resources which are required for a next page.
 
-[Try demo](http://demo.sirko.io)
+[Try demo](https://demo.sirko.io)
 
 ## Development
 
 ### Major dependencies
 
-  - [Webpack](http://webpack.github.io/docs/) packages the final script which should be included into the site.
-  - [Babeljs](https://babeljs.io/) compiles our ES2015 JavaScript code to code supported by current versions of browsers.
-  - [Mocha framework](https://mochajs.org/) is used as a JavaScript test framework since it plays nicely with [Webpack](http://webpack.github.io/docs/testing.html). All tests use a [default assertion](https://nodejs.org/api/assert.html) library supplied by Node.js.
+  - [Rollup](https://rollupjs.org/) creates a bundle which should be included into the site.
+  - [Rollup Bubel](https://gitlab.com/Rich-Harris/rollup-plugin-buble) compiles ES2015 with Rollup.
   - [Karma runner](http://karma-runner.github.io/) launches tests in different browsers to prove that the client works fine.
+  - [Mocha framework](https://mochajs.org/) is a JavaScript test framework.
+  - [Chai](http://chaijs.com/) is an assertion lib for tests.
 
 ### Setup
 
@@ -29,7 +30,7 @@ $ npm install
 $ npm start
 ```
 
-This command launches Webpack in the development mode (all scripts get recompiled once changes are saved).
+This command launches Rollup in the development mode (all scripts get recompiled once changes are saved).
 
 ### Testing
 
@@ -42,7 +43,7 @@ It will launch the Chrome and Firefox browsers and keep them running to re-launc
 ### Production build
 
 ```
-$ NODE_ENV=prod webpack
+$ npm run-script build
 ```
 
 It builds the `dist/sirko.js` script which should be included into the site.

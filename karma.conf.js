@@ -1,6 +1,6 @@
-// reuse the webpack config
-var webpackConfig = require('./webpack.config.js');
-delete webpackConfig.entry;
+const resolve  = require('rollup-plugin-node-resolve'),
+      commonjs = require('rollup-plugin-commonjs'),
+      buble    = require('rollup-plugin-buble');
 
 module.exports = function(config) {
   var browsers = ['Chrome', 'Firefox'];
@@ -12,32 +12,26 @@ module.exports = function(config) {
   config.set({
     browsers: browsers,
 
-    frameworks: ['mocha'],
+    frameworks: ['mocha', 'chai'],
 
     files: [
-      'test/*_test.js',
-      'test/**/*_test.js'
+      { pattern: 'test/*_test.js', watched: false },
+      { pattern: 'test/**/*_test.js', watched: false }
     ],
 
     preprocessors: {
-      'test/*_test.js':    ['webpack'],
-      'test/**/*_test.js': ['webpack']
+      'test/*_test.js':    ['rollup'],
+      'test/**/*_test.js': ['rollup']
     },
 
-    webpack: webpackConfig,
-
-    webpackMiddleware: {
-      noInfo: true,
-      stats: {
-        chunks: false
-      }
-    },
-
-    plugins: [
-      require('karma-webpack'),
-      require('karma-mocha'),
-      require('karma-chrome-launcher'),
-      require('karma-firefox-launcher')
-    ]
+    rollupPreprocessor: {
+      format: 'iife',
+      name: 'sirko',
+      plugins: [
+        resolve(),
+        commonjs(),
+        buble()
+      ]
+     }
   });
 };

@@ -1,5 +1,3 @@
-import assert from 'assert';
-
 import Correctness from '../../../src/sirko/postprocessors/correctness';
 import Storage from '../../../src/sirko/storage';
 

@@ -1,6 +1,4 @@
-import assert from 'assert';
 import sinon from 'sinon';
-
 import Predictor from '../../src/sirko/predictor';
 
 describe('Predictor', function() {

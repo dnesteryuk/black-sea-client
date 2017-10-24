@@ -1,5 +1,3 @@
-import assert from 'assert';
-
 import Assets from '../../../src/sirko/preprocessors/assets';
 
 describe('Assets', function() {

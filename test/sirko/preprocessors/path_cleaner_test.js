@@ -1,5 +1,3 @@
-import assert from 'assert';
-
 import PathCleaner from '../../../src/sirko/preprocessors/path_cleaner';
 
 describe('PathCleaner', function() {

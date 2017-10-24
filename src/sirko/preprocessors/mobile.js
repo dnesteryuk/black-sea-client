@@ -1,4 +1,4 @@
-import { Class as isMobile } from 'ismobilejs/isMobile';
+import isMobile from 'ismobilejs/isMobile';
 
 /**
  * Resets the request info if it is a user on a mobile device.
@@ -9,7 +9,7 @@ import { Class as isMobile } from 'ismobilejs/isMobile';
  */
 const Mobile = {
   process: function(reqInfo) {
-    let mob = new isMobile(reqInfo.agent);
+    let mob = new isMobile.Class(reqInfo.agent);
 
     if (mob.any) return false;
 

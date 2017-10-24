@@ -1,5 +1,3 @@
-import assert from 'assert';
-
 import Register from '../../../src/sirko/preprocessors/register';
 
 const cacheName = 'sirko-pages';

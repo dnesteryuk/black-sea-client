@@ -1,5 +1,3 @@
-import assert from 'assert';
-
 import Referrer from '../../../src/sirko/preprocessors/referrer';
 
 describe('Referrer', function() {

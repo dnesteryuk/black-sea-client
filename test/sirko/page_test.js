@@ -1,6 +1,4 @@
-import assert from 'assert';
 import helpers from '../helpers';
-
 import Page from '../../src/sirko/page';
 
 describe('Page', function() {

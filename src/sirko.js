@@ -36,7 +36,7 @@ if (sirko) {
   Client.predict(reqInfo, clientObj).then((res) => {
     // the user's callback is here
     if (clientObj.predicted) {
-      clientObj.predicted.apply(this, res);
+      clientObj.predicted.apply(clientObj.predicted, res);
     }
 
     // keep the result in the client object,
