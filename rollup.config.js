@@ -7,7 +7,8 @@ export default {
   input: 'src/sirko.js',
   output: {
     file: 'dist/sirko.js',
-    format: 'cjs'
+    format: 'iife',
+    name: 'Sirko'
   },
   plugins: [
     resolve(),

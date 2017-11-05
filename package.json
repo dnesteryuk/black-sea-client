@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "rollup --config --watch",
-    "build": "rollup --config",
+    "build": "rollup --config && rollup --config rollup.sw.config.js",
     "test": "karma start karma.conf.js"
   },
   "repository": {
