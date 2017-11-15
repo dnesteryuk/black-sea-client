@@ -6,15 +6,15 @@ import Storage from '../storage';
  * The client caches only the last prediction to not hit the engine
  * again when a user refreshes the page.
  */
-const Cache = {
-  process: function(reqInfo) {
-    if (Storage.pull('lastPredictionFor') === reqInfo.currentPath) {
-      reqInfo.prediction = Storage.pull('lastPrediction');
-      reqInfo.prediction.cached = true;
+const ReadCache = {
+  call: function(data) {
+    if (Storage.pull('lastPredictionFor') === data.request.currentPath) {
+      data.prediction = Storage.pull('lastPrediction');
+      data.prediction.cached = true;
     }
 
-    return reqInfo;
+    return data;
   }
 }
 
-export default Cache;
+export default ReadCache;

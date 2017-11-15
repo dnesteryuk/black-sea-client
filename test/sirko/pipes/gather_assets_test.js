@@ -1,7 +1,7 @@
-import Assets from '../../../src/sirko/preprocessors/assets';
+import GatherAssets from '../../../src/sirko/pipes/gather_assets';
 
-describe('Assets', function() {
-  describe('.process', function() {
+describe('GatherAssets', function() {
+  describe('.call', function() {
     before(function() {
       this.cssFiles = [
         'css/main.css',
@@ -35,16 +35,14 @@ describe('Assets', function() {
       });
     });
 
-    it('gathers urls to CSS and JS files', function() {
-      let res = Assets.process({});
-
-      let expectedAssets = this.cssFiles.concat(this.jsFiles);
-
-      let origin = document.location.origin;
+    it('gathers urls of CSS and JS files', function() {
+      let res = GatherAssets.call({request: {}}),
+          expectedAssets = this.cssFiles.concat(this.jsFiles),
+          origin = document.location.origin;
 
       expectedAssets.forEach(function(asset, index) {
         assert.equal(
-          res.assets[index],
+          res.request.assets[index],
           `${origin}/${asset}`
         );
       });

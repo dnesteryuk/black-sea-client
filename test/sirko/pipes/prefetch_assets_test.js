@@ -1,11 +1,15 @@
-import Assets from '../../../src/sirko/postprocessors/assets';
+import PrefetchAssets from '../../../src/sirko/pipes/prefetch_assets';
 import Helpers from '../../helpers';
 
-describe('Assets', function() {
-  describe('.process', function() {
+describe('PrefetchAssets', function() {
+  describe('.call', function() {
     beforeEach(function() {
       this.predictedAssets = ['css/main.css', 'js/main.js'];
       this.origin = document.location.origin;
+      this.data = {
+        request:    {assets: []},
+        prediction: {assets: this.predictedAssets}
+      };
     });
 
     afterEach(function() {
@@ -13,7 +17,7 @@ describe('Assets', function() {
     });
 
     it('adds link tags to prefetch assets', function() {
-      Assets.process({assets: this.predictedAssets}, {assets: []});
+      PrefetchAssets.call(this.data);
 
       let link = document.querySelectorAll('link[rel="prefetch"]');
 
@@ -23,8 +27,12 @@ describe('Assets', function() {
     });
 
     context('there are assets which are loaded for the current page', function() {
+      beforeEach(function() {
+        this.data.request.assets = ['js/main.js'];
+      });
+
       it('does not add hints for them since they are already in the cache', function() {
-        Assets.process({assets: this.predictedAssets}, {assets: ['js/main.js']});
+        PrefetchAssets.call(this.data);
 
         assert.ok(document.querySelector('link[href="css/main.css"]'),
           'the main.css got the prefetch hint');
@@ -36,7 +44,7 @@ describe('Assets', function() {
 
     context('no prediction', function() {
       it('does not fail', function() {
-        Assets.process({});
+        PrefetchAssets.call({prediction: {}});
       });
     });
   });

@@ -5,7 +5,7 @@ describe('Predictor', function() {
   beforeEach(function() {
     this.xhr = sinon.useFakeXMLHttpRequest();
 
-    this.xhr.onCreate = function(xhr) { this.request = xhr; }.bind(this);
+    this.xhr.onCreate = (xhr) => { this.request = xhr; };
 
     this.predictor = new Predictor('https://sirko.io');
 

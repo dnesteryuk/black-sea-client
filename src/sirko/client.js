@@ -1,6 +1,4 @@
-import Page from './page';
-import Predictor from './predictor';
-import Processor from './processor';
+import Pipeline from './pipeline';
 
 /**
  * Gathers info (a path and assets) of the current page.
@@ -12,35 +10,7 @@ import Processor from './processor';
  */
 const Client = {
   predict: function(reqInfo, conf) {
-    reqInfo = Processor.preprocess(reqInfo, conf);
-
-    if(!reqInfo) return false;
-
-    let promise;
-
-    // the prediction is received from the cache
-    if (reqInfo.prediction) {
-      promise = new Promise((resolve) => {
-        resolve(reqInfo.prediction);
-      });
-    }
-    else {
-      let predictor = new Predictor(conf.engineUrl);
-
-      promise = predictor.predict({
-        currentPath:  reqInfo.currentPath,
-        referrerPath: reqInfo.referrer,
-        assets:       reqInfo.assets
-      });
-    }
-
-    return promise.then((resp) => {
-      let prediction = Processor.postprocess(resp, reqInfo);
-
-      return new Promise((resolve) => {
-        resolve([prediction.path, prediction.isPrevCorrect]);
-      });
-    });
+    return Pipeline.call(reqInfo, conf);
   }
 };
 

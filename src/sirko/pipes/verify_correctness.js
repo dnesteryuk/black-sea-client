@@ -9,16 +9,18 @@ import Storage from '../storage';
  * Performing this check, we make sure an external tracking service integrated
  * by a customer receives only information about unique predictions.
  */
-const Correctness = {
-  process: function(resp, reqInfo) {
-    let prevPrediction = Storage.pull('prevPrediction');
+const VerifyCorrectness = {
+  call: function(data) {
+    let prevPrediction = Storage.pull('prevPrediction'),
+        prediction = data.prediction,
+        isPrevCorrect;
 
-    if (!resp.cached && prevPrediction) {
-      resp.isPrevCorrect = prevPrediction.path === reqInfo.currentPath;
+    if (!prediction.cached && prevPrediction && prevPrediction.path) {
+      isPrevCorrect = prevPrediction.path === data.request.currentPath;
     }
 
-    return resp;
+    return [prediction.path, isPrevCorrect];
   }
 };
 
-export default Correctness;
+export default VerifyCorrectness;

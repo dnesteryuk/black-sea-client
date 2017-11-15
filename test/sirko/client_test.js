@@ -43,36 +43,5 @@ describe('Client', function() {
         assert.equal(wasPrevCorrect, undefined);
       });
     });
-
-    context('it is a mobile browser', function() {
-      beforeEach(function() {
-        this.reqInfo.agent = 'Mozilla/5.0 (Linux; Android 5.1.1; Nexus 4 Build/LMY48T)' +
-          ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.91 Mobile Safari/537.36';
-      });
-
-      it('returns false right away', function() {
-        let res = Client.predict(this.reqInfo, this.conf);
-
-        assert.equal(res, false);
-      });
-    });
-
-    context('the referrer belongs to an external site', function() {
-      beforeEach(function() {
-        this.reqInfo.referrer = 'http://www.google.com/some-path';
-        this.respond();
-      });
-
-      it('does not send the referrer', function() {
-        return Client.predict(this.reqInfo, this.conf).then(() => {
-          let request = this.server.requests[0];
-
-          assert.equal(
-            JSON.parse(request.requestBody).referrer,
-            undefined
-          );
-        });
-      });
-    });
   });
 });

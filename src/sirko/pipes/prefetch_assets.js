@@ -5,18 +5,21 @@ import Page from '../page';
  * If some of assets are loaded for the current page, the prefetch hints won't be
  * added for them since they are already in the browser's cache.
  */
- const Assets = {
-  process: function(resp, reqInfo) {
-    if (resp.assets) {
-      resp.assets.forEach((url) => {
-        if (reqInfo.assets.indexOf(url) > -1) return;
+ const PrefetchAssets = {
+  call: function(data) {
+    let prediction = data.prediction,
+        request = data.request;
+
+    if (prediction.assets) {
+      prediction.assets.forEach((url) => {
+        if (request.assets.indexOf(url) > -1) return;
 
         Page.appendLink('prefetch', url);
       });
     }
 
-    return resp;
+    return data;
   }
 };
 
-export default Assets;
+export default PrefetchAssets;

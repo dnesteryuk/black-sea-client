@@ -1,9 +1,9 @@
-import Register from '../../../src/sirko/preprocessors/register';
+import RegisterSW from '../../../src/sirko/pipes/register_sw';
 
 const cacheName = 'sirko-pages';
 
-describe('Register', function() {
-  describe('.process', function() {
+describe('RegisterSW', function() {
+  describe('.call', function() {
     beforeEach(function(done) {
       // add something to the cache
       caches.open(cacheName)
@@ -15,7 +15,7 @@ describe('Register', function() {
     });
 
     it('removes previously cached pages', function(done) {
-      Register.process({});
+      RegisterSW.call({});
 
       caches.has(cacheName).then(function(existence) {
         assert.equal(existence, false);

@@ -1,9 +1,9 @@
 /**
- * Gathers urls to JS and CSS files on the current page,
+ * Gathers urls of JS and CSS files on the current page,
  * so those urls can be stored on the backend.
  */
-const Assets = {
-  process: function(reqInfo) {
+const GatherAssets = {
+  call: function(data) {
     let assets = Array.prototype.slice.call(
       document.querySelectorAll('link[rel="stylesheet"]')
     ).map(function(item) { return item.href; });
@@ -12,10 +12,10 @@ const Assets = {
       document.querySelectorAll('script[src]')
     ).forEach(function(item) { assets.push(item.src); });
 
-    reqInfo.assets = assets;
+    data.request.assets = assets;
 
-    return reqInfo;
+    return data;
   }
 };
 
-export default Assets;
+export default GatherAssets;
