@@ -1,12 +1,12 @@
 /**
- * Removes the domain and protocol from the current and the referrer paths.
+ * Extracts paths from the current and the referrer urls.
  */
 const CleanPath = {
   call: function(data) {
     let request = data.request,
         reg = new RegExp(`^http(s)?://${request.domain}(.*)?/`);
 
-    request.currentPath = request.currentPath.replace(reg, '/');
+    request.currentPath = request.currentUrl.replace(reg, '/');
 
     if (request.referrer) {
       request.referrer = request.referrer.replace(reg, '/');

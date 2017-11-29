@@ -2,17 +2,14 @@ import Client from './sirko/client';
 
 let sirko = window.sirko;
 
-// The lib depends on promises (https://developer.mozilla.org/uk/docs/Web/JavaScript/Reference/Global_Objects/Promise).
-// There are old browsers (for instance, IE11) which don't natively support promises.
-// So, if a browser doesn't support promises, the lib interrupts execution.
-// We don't apply a polyfill, because browsers which don't support promises
-// don't support service worker neither.
+// This lib heavily uses a service worker (https://developers.google.com/web/fundamentals/primers/service-workers/),
+// so if a browser doesn't support service workers, there is no reason to continue.
 // Make a request to the engine once the script gets loaded
-if (typeof Promise !== 'undefined' && sirko) {
+if (('serviceWorker' in navigator) && sirko) {
   let reqInfo = {
     agent:       window.navigator.userAgent,
     referrer:    document.referrer,
-    currentPath: window.location.href,
+    currentUrl:  window.location.href,
     domain:      document.domain
   };
 

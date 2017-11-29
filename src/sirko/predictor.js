@@ -23,7 +23,7 @@ class Predictor {
 
   _makePrediction(entry, resolve) {
     this.xhr.withCredentials = true;
-    this.xhr.open('POST', this._predictorUrl());
+    this.xhr.open('POST', this.engineUrl);
     this.xhr.setRequestHeader('Content-Type', 'application/json');
 
     this.xhr.onload = () => {
@@ -31,12 +31,6 @@ class Predictor {
     };
 
     this.xhr.send(this._requestBody(entry));
-  }
-
-  _predictorUrl() {
-    let url = `${this.engineUrl}/predict`;
-
-    return url;
   }
 
   _requestBody(entry) {

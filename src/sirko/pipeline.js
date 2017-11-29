@@ -4,6 +4,7 @@ import VerifyReferrer from './pipes/verify_referrer';
 import CleanPaths from './pipes/clean_paths';
 import ReadCache from './pipes/read_cache';
 import GatherAssets from './pipes/gather_assets';
+import VerifyState from './pipes/verify_state';
 
 import Predict from './pipes/predict';
 import PrefetchPage from './pipes/prefetch_page';
@@ -17,6 +18,7 @@ const Pipeline = {
     RestrictMobile,
     RegisterSW,
     VerifyReferrer,
+    VerifyState,
     CleanPaths,
     ReadCache,
     GatherAssets,

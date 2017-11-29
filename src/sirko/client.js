@@ -10,6 +10,7 @@ import Pipeline from './pipeline';
  */
 const Client = {
   predict: function(reqInfo, conf) {
+    conf.engineUrl = conf.engineUrl + '/predict';
     return Pipeline.call(reqInfo, conf);
   }
 };

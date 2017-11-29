@@ -3,11 +3,12 @@ import Predictor from '../../src/sirko/predictor';
 
 describe('Predictor', function() {
   beforeEach(function() {
+    this.engineUrl = 'https://sirko.io/predict';
     this.xhr = sinon.useFakeXMLHttpRequest();
 
     this.xhr.onCreate = (xhr) => { this.request = xhr; };
 
-    this.predictor = new Predictor('https://sirko.io');
+    this.predictor = new Predictor(this.engineUrl);
 
     this.entry = {
       currentPath: '/',
@@ -39,7 +40,7 @@ describe('Predictor', function() {
 
       assert(this.request);
       assert.equal(this.request.method, 'POST');
-      assert.equal(this.request.url, 'https://sirko.io/predict');
+      assert.equal(this.request.url, this.engineUrl);
 
       let expectedBody = JSON.stringify({
         current: this.entry.currentPath,

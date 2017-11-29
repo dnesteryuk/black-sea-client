@@ -11,7 +11,7 @@ const Page = {
   call: function(data) {
     let predictedPath = data.prediction.path;
 
-    if (predictedPath && ('serviceWorker' in navigator)) {
+    if (predictedPath) {
       caches.open('sirko-pages')
         .then((cache) => {
           this._fetch(cache, predictedPath);

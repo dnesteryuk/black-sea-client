@@ -5,9 +5,9 @@ describe('CleanPath', function() {
     beforeEach(function() {
       this.data = {
         request: {
-          domain:      'app.io',
-          currentPath: 'https://app.io/some-path',
-          referrer:    'http://app.io:1234/some-referrer'
+          domain:     'app.io',
+          currentUrl: 'https://app.io/some-path',
+          referrer:   'http://app.io:1234/some-referrer'
         }
       };
     });
