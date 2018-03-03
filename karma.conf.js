@@ -3,7 +3,8 @@ const resolve  = require('rollup-plugin-node-resolve'),
       buble    = require('rollup-plugin-buble');
 
 let proxies = {
-  '/sirko_sw.js': '/base/test/support/sirko_sw.js'
+  '/sirko_sw.js': '/base/test/support/sirko_sw.js',
+  '/stub.html': '/base/test/support/fixtures/stub.html'
 };
 
 // dummy assets required for testing

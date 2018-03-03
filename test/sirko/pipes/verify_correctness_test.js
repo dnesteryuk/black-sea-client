@@ -4,11 +4,14 @@ import Storage from '../../../src/sirko/storage';
 describe('VerifyCorrectness', function() {
   describe('.call', function() {
     beforeEach(function() {
-      Storage.put('prevPrediction', {path: '/index'});
+      Storage.put(
+        'prevPrediction',
+        {pages: [{path: '/index'}]}
+      );
 
       this.data = {
         request: {},
-        prediction: {cached: true}
+        prediction: {pages: []}
       };
     });
 
@@ -16,17 +19,9 @@ describe('VerifyCorrectness', function() {
       Storage.clear();
     });
 
-    context('the current prediction is received from the cache', function() {
-      it('keeps the undefined value', function() {
-        let [_, isPrevCorrect] = VerifyCorrectness.call(this.data);
-
-        assert.equal(isPrevCorrect, undefined);
-      });
-    });
-
-    context('the was no previous prediction', function() {
+    context('there was no previous prediction', function() {
       beforeEach(function() {
-        Storage.put('prevPrediction', {});
+        Storage.put('prevPrediction', {pages: []});
       });
 
       it('keeps the undefined value', function() {
@@ -39,7 +34,6 @@ describe('VerifyCorrectness', function() {
     context('the previous prediction foresaw the current page', function() {
       beforeEach(function() {
         this.data.request.currentPath = '/index';
-        this.data.prediction.cached = undefined;
       });
 
       it('sets true', function() {
@@ -51,7 +45,6 @@ describe('VerifyCorrectness', function() {
     context('the previous prediction did not foresee the current page', function() {
       beforeEach(function() {
         this.data.request.currentPath = '/about';
-        this.data.prediction.cached = undefined;
       });
 
       it('sets false', function() {

@@ -8,7 +8,8 @@ class Predictor {
   }
 
   /**
-   * Makes a request to the engine in order to get info about a next page.
+   * Makes a request to the engine in order to get info about pages
+   * the current user might visit.
    *
    * entry - The object keeping information about the current page.
    *   currentPath:  - The path of the current page.

@@ -2,13 +2,13 @@ import RestrictMobile from './pipes/restrict_mobile';
 import RegisterSW from './pipes/register_sw';
 import VerifyReferrer from './pipes/verify_referrer';
 import CleanPaths from './pipes/clean_paths';
-import ReadCache from './pipes/read_cache';
+import CheckCache from './pipes/check_cache';
+import CleanCache from './pipes/clean_cache';
 import GatherAssets from './pipes/gather_assets';
 import VerifyState from './pipes/verify_state';
 
 import Predict from './pipes/predict';
-import PrefetchPage from './pipes/prefetch_page';
-import PrefetchAssets from './pipes/prefetch_assets';
+import Prefetch from './pipes/prefetch';
 import WriteCache from './pipes/write_cache';
 import VerifyCorrectness from './pipes/verify_correctness';
 
@@ -20,14 +20,14 @@ const Pipeline = {
     VerifyReferrer,
     VerifyState,
     CleanPaths,
-    ReadCache,
+    CheckCache,
+    CleanCache,
     GatherAssets,
 
     Predict,
 
     // after prediction
-    PrefetchPage,
-    PrefetchAssets,
+    Prefetch,
     WriteCache,
     VerifyCorrectness // this step must be last
   ],

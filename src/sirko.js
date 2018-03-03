@@ -35,14 +35,28 @@ if (('serviceWorker' in navigator) && sirko) {
     }
   };
 
-  Client.predict(reqInfo, clientObj).then((res) => {
-    // the user's callback is here
-    if (clientObj.predicted) {
-      clientObj.predicted.apply(clientObj.predicted, res);
-    }
+  Client.predict(reqInfo, clientObj)
+    .then((res) => {
+      // don't crash the promise because of a mistake
+      // in the user's code
+      try {
+        let callback = clientObj.predicted;
 
-    // keep the result in the client object,
-    // maybe a user's callback appears later
-    clientObj.prediction = res;
-  });
+        // the user's callback is here
+        if (callback) callback.apply(callback, res);
+
+        // keep the result in the client object,
+        // maybe a user's callback appears later
+        clientObj.prediction = res;
+      }
+      catch(error) {
+        console.error(error);
+      }
+    })
+    .catch(() => {
+      // this thing isn't documented, should it be?
+      // now it is only required for the demo site
+      let callback = clientObj.rejected;
+      if (callback) callback.apply(callback);
+    });
 }

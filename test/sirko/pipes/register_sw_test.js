@@ -1,26 +1,11 @@
 import RegisterSW from '../../../src/sirko/pipes/register_sw';
 
-const cacheName = 'sirko-pages';
-
 describe('RegisterSW', function() {
   describe('.call', function() {
-    beforeEach(function(done) {
-      // add something to the cache
-      caches.open(cacheName)
-        .then(function(cache) {
-          cache.put('/index', new Response());
-
-          done();
-        });
-    });
-
-    it('removes previously cached pages', function(done) {
-      RegisterSW.call({});
-
-      caches.has(cacheName).then(function(existence) {
-        assert.equal(existence, false);
-
-        done();
+    it('returns a promise which resolves once the service worker is active', function() {
+      RegisterSW.call({}).then((data) => {
+        assert.isObject(data.serviceWorker);
+        assert.isObject(navigator.serviceWorker.controller);
       });
     });
   });

@@ -20,9 +20,14 @@ describe('Client', function() {
     this.server = sinon.fakeServer.create({autoRespond: true});
 
     this.respond = (path = '/list') => {
+      let resp = {
+        pages:  [{path: path}],
+        assets: []
+      };
+
       this.server.respondWith(
         /sirko\.io/,
-        [200, {}, JSON.stringify({path: path, assets: []})]
+        [200, {}, JSON.stringify(resp)]
       );
     };
   });
@@ -37,9 +42,9 @@ describe('Client', function() {
       this.respond();
 
       return Client.predict(this.reqInfo, this.conf).then((res) => {
-        let [predictedPath, wasPrevCorrect] = res;
+        let [predictedPages, wasPrevCorrect] = res;
 
-        assert.equal(predictedPath, '/list');
+        assert.equal(predictedPages[0].path, '/list');
         assert.equal(wasPrevCorrect, undefined);
       });
     });
