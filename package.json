@@ -1,6 +1,6 @@
 {
   "name": "sirko",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "The client for the sirko engine making predictions about users' navigation.",
   "main": "dist/sirko.js",
   "directories": {
