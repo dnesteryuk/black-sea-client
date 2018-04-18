@@ -4,18 +4,30 @@
  */
 const GatherAssets = {
   call: function(data) {
-    let assets = Array.prototype.slice.call(
+    let assets = [];
+
+    Array.prototype.slice.call(
       document.querySelectorAll('link[rel="stylesheet"]')
-    ).map((item) => { return item.href; });
+    ).forEach((item) => {
+      if (isHttp(item.href)) assets.push(item.href);
+    });
 
     Array.prototype.slice.call(
       document.querySelectorAll('script[src]')
-    ).forEach((item) => { assets.push(item.src); });
+    ).forEach((item) => {
+      if (isHttp(item.src)) assets.push(item.src);
+    });
 
     data.request.assets = assets;
 
     return data;
   }
 };
+
+const HttpPattern = new RegExp('^http(s)?://');
+
+function isHttp(url) {
+  return HttpPattern.test(url);
+}
 
 export default GatherAssets;

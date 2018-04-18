@@ -4,7 +4,7 @@ describe('VerifyReferrer', function() {
   describe('.call', function() {
     beforeEach(function() {
       this.data = {
-        request: {domain: 'app.io'}
+        request: {origin: 'https://app.io'}
       };
     });
 
@@ -17,20 +17,9 @@ describe('VerifyReferrer', function() {
         assert.equal(res.request.referrer, null);
       });
 
-      context('the internal referrer with http', function() {
+      context('the internal referrer', function() {
         it('keeps the referrer', function() {
-          let referrer = 'http://app.io';
-          this.data.request.referrer = referrer;
-
-          let res = VerifyReferrer.call(this.data);
-
-          assert.equal(res.request.referrer, referrer);
-        });
-      });
-
-      context('the internal referrer with https', function() {
-        it('keeps the referrer', function() {
-          let referrer = 'https://app.io';
+          let referrer = 'https://app.io/';
           this.data.request.referrer = referrer;
 
           let res = VerifyReferrer.call(this.data);

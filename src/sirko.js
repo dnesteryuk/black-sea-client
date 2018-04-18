@@ -10,7 +10,7 @@ if (('serviceWorker' in navigator) && sirko) {
     agent:       window.navigator.userAgent,
     referrer:    document.referrer,
     currentUrl:  window.location.href,
-    domain:      document.domain
+    origin:      window.location.origin
   };
 
   let clientObj = {};

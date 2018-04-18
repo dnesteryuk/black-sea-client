@@ -4,7 +4,7 @@
 const VerifyReferrer = {
   call: function(data) {
     let referrer = data.request.referrer,
-        reg = new RegExp(`^http(s)?://${data.request.domain}`);
+        reg = new RegExp(`^${data.request.origin}`);
 
     if (referrer && !reg.test(referrer)) referrer = null;
 

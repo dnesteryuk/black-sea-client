@@ -5,9 +5,9 @@ describe('CleanPath', function() {
     beforeEach(function() {
       this.data = {
         request: {
-          domain:     'app.io',
-          currentUrl: 'https://app.io/some-path',
-          referrer:   'http://app.io:1234/some-referrer'
+          origin:     'https://app.io',
+          currentUrl: 'https://app.io/current-path/sub-path/page.html',
+          referrer:   'https://app.io/referrer-path/sub-path/page.html'
         }
       };
     });
@@ -15,8 +15,8 @@ describe('CleanPath', function() {
     it('removes the domain and protocol from the current path and referrer', function() {
       let res = CleanPath.call(this.data);
 
-      assert.equal(res.request.currentPath, '/some-path');
-      assert.equal(res.request.referrer, '/some-referrer');
+      assert.equal(res.request.currentPath, '/current-path/sub-path/page.html');
+      assert.equal(res.request.referrer, '/referrer-path/sub-path/page.html');
     });
   });
 });

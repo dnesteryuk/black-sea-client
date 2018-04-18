@@ -4,12 +4,12 @@
 const CleanPath = {
   call: function(data) {
     let request = data.request,
-        reg = new RegExp(`^http(s)?://${request.domain}(.*)?/`);
+        reg = new RegExp(`^${request.origin}`);
 
-    request.currentPath = request.currentUrl.replace(reg, '/');
+    request.currentPath = request.currentUrl.replace(reg, '');
 
     if (request.referrer) {
-      request.referrer = request.referrer.replace(reg, '/');
+      request.referrer = request.referrer.replace(reg, '');
     }
 
     return data;

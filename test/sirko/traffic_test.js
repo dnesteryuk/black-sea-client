@@ -7,7 +7,7 @@ describe('Traffic', function() {
 
   describe('.modifiedState', function() {
     beforeEach(function() {
-      this.domain = 'example.org';
+      this.origin = 'http://example.org';
       this.referrer = 'http://example.org/a';
       this.current  = 'http://example.org/d';
     });
@@ -30,12 +30,12 @@ describe('Traffic', function() {
         });
 
         assert.equal(
-          Traffic.modifiedState(this.referrer, this.current, this.domain),
+          Traffic.modifiedState(this.referrer, this.current, this.origin),
           true
         );
       });
 
-      context('the request is not related to the given domain', function() {
+      context('the request is not related to the given origin', function() {
         beforeEach(function() {
           Traffic.add({
             url:    this.referrer,
@@ -55,7 +55,7 @@ describe('Traffic', function() {
 
         it('returns false', function() {
           assert.equal(
-            Traffic.modifiedState(this.referrer, this.current, this.domain),
+            Traffic.modifiedState(this.referrer, this.current, this.origin),
             false
           );
         });
@@ -85,7 +85,7 @@ describe('Traffic', function() {
           let res = Traffic.modifiedState(
             this.referrer,
             this.current,
-            this.domain,
+            this.origin,
             [this.urlModifingData]
           );
 
@@ -94,7 +94,7 @@ describe('Traffic', function() {
       });
     });
 
-    context('the current page is loaded via a request modifing data', function() {
+    context('the current page is loaded via a request modifying data', function() {
       beforeEach(function() {
         Traffic.add({
           url:    this.referrer,
@@ -109,13 +109,13 @@ describe('Traffic', function() {
 
       it('returns true', function() {
         assert.equal(
-          Traffic.modifiedState(this.referrer, this.current, this.domain),
+          Traffic.modifiedState(this.referrer, this.current, this.origin),
           true
         );
       });
     });
 
-    context('the current page is loaded via several times', function() {
+    context('the current page is loaded several times', function() {
       beforeEach(function() {
         // a user visited the referrer page
         Traffic.add({
@@ -144,7 +144,7 @@ describe('Traffic', function() {
 
       it('returns true', function() {
         assert.equal(
-          Traffic.modifiedState(this.referrer, this.current, this.domain),
+          Traffic.modifiedState(this.referrer, this.current, this.origin),
           true
         );
       });
@@ -160,7 +160,7 @@ describe('Traffic', function() {
 
       it('returns true', function() {
         assert.equal(
-          Traffic.modifiedState(this.referrer, this.current, this.domain),
+          Traffic.modifiedState(this.referrer, this.current, this.origin),
           true
         );
       });

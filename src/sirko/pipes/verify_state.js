@@ -25,7 +25,7 @@ const VerifyState = {
           {
             referrer:   request.referrer,
             currentUrl: request.currentUrl,
-            domain:     request.domain,
+            origin:     request.origin,
             engineUrl:  conf.engineUrl
           },
           [msgChannel.port2]

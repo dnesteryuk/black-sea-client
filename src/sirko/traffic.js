@@ -36,11 +36,11 @@ const Traffic = {
    * Returns true if there are requests modifying data between the referrer
    * and the current page. Otherwise, returns false.
    *
-   * This method only considers requests related to the given domain.
+   * This method only considers requests related to the given origin.
    * If there are requests which modify data, but they need to be excluded from
    * the logic, urls of those requests should be added to the whitelist.
    */
-  modifiedState: function(referrerUrl, currentUrl, domain, whitelist = []) {
+  modifiedState: function(referrerUrl, currentUrl, origin, whitelist = []) {
     let referrerPos = findIndexOfOldestRecord.call(this, referrerUrl),
         currentPos  = findIndexOfNewestRecord.call(this, currentUrl);
 
@@ -53,7 +53,7 @@ const Traffic = {
     if (!referrer || methodModifingData(current.method))
       return true;
 
-    let reg = new RegExp(`^http(s)?://${domain}`);
+    let reg = new RegExp(`^${origin}`);
 
     for (let i = referrerPos + 1; i < currentPos; i++) {
       let record = this.records[i];

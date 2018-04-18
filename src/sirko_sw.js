@@ -37,7 +37,7 @@ self.addEventListener('message', function(event) {
   let isStateModified = Traffic.modifiedState(
     data.referrer,
     data.currentUrl,
-    data.domain,
+    data.origin,
 
     // the engine's url must be in the whitelist, otherwise,
     // all transitions will be treated as transitions with modified data
