@@ -34,8 +34,9 @@ module.exports = function(config) {
     proxies: proxies,
 
     preprocessors: {
-      'test/*_test.js':    ['rollup'],
-      'test/**/*_test.js': ['rollup']
+      'test/*_test.js':           ['rollup'],
+      'test/**/*_test.js':        ['rollup'],
+      'test/support/sirko_sw.js': ['rollup']
     },
 
     rollupPreprocessor: {

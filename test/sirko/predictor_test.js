@@ -1,13 +1,11 @@
-import sinon from 'sinon';
 import Predictor from '../../src/sirko/predictor';
+import RegisterSW from '../../src/sirko/pipes/register_sw';
+import helpers from '../helpers';
+import { predictedList } from '../support/prediction_stub';
 
 describe('Predictor', function() {
   beforeEach(function() {
     this.engineUrl = 'https://sirko.io/predict';
-    this.xhr = sinon.useFakeXMLHttpRequest();
-
-    this.xhr.onCreate = (xhr) => { this.request = xhr; };
-
     this.predictor = new Predictor(this.engineUrl);
 
     this.entry = {
@@ -15,72 +13,59 @@ describe('Predictor', function() {
       assets:      ['/js/main.js']
     };
 
-    this.subbedPrediction = {
-      path:   '/list',
-      assets: ['/js/form.js']
-    };
+    this.data = {};
 
-    this.respond = () => {
-      this.request.respond(
-        200,
-        {},
-        JSON.stringify(this.subbedPrediction)
+    this.getLatestRequest = () => {
+      return helpers.sendMsgToSWStub(
+        'latestRequest',
+        this.data.serviceWorker
       );
     };
+
+    return RegisterSW.call(this.data);
   });
 
-  afterEach(function() {
-    this.request = null;
-    this.xhr.restore();
-  });
-
-  describe('#predict', function() {
+  describe('#predict', function(done) {
     it('makes a request to the engine', function() {
-      this.predictor.predict(this.entry);
+      return this.predictor.predict(this.entry)
+        .then(this.getLatestRequest)
+        .then((latestRequest) => {
+          assert.isOk(latestRequest);
+          assert.equal(latestRequest.method, 'POST');
+          assert.equal(latestRequest.url, this.engineUrl);
 
-      assert(this.request);
-      assert.equal(this.request.method, 'POST');
-      assert.equal(this.request.url, this.engineUrl);
+          let expectedBody = {
+            current: this.entry.currentPath,
+            assets:  this.entry.assets
+          };
 
-      let expectedBody = JSON.stringify({
-        current: this.entry.currentPath,
-        assets:  this.entry.assets
-      });
-
-      assert.equal(
-        this.request.requestBody,
-        expectedBody
-      );
+          assert.deepEqual(latestRequest.body, expectedBody);
+        });
     });
 
     context('the referrer is present', function() {
       it('includes the referrer', function() {
         this.entry.referrerPath = '/index';
 
-        this.predictor.predict(this.entry);
+        return this.predictor.predict(this.entry)
+          .then(this.getLatestRequest)
+          .then((latestRequest) => {
+            let expectedBody = {
+              current:  this.entry.currentPath,
+              assets:   this.entry.assets,
+              referrer: this.entry.referrerPath
+            };
 
-        let expectedBody = JSON.stringify({
-          current:  this.entry.currentPath,
-          assets:   this.entry.assets,
-          referrer: this.entry.referrerPath
-        });
-
-        assert.equal(
-          this.request.requestBody,
-          expectedBody
-        );
+            assert.deepEqual(latestRequest.body, expectedBody);
+          });
       });
     });
 
-    it('resolves the promise once the prediction gets received', function(done) {
-      this.predictor.predict(this.entry).then((prediction) => {
-        assert.equal(prediction.path, this.subbedPrediction.path);
-        assert.equal(prediction.assets[0], this.subbedPrediction.assets[0]);
-
-        done();
-      });
-
-      this.respond();
+    it('resolves the promise once the prediction gets received', function() {
+      return this.predictor.predict(this.entry)
+        .then((prediction) => {
+          assert.deepEqual(prediction, predictedList);
+        });
     });
   });
 });

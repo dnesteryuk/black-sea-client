@@ -20,8 +20,7 @@
     "rollup-plugin-buble": "^0.19",
     "rollup-plugin-commonjs": "^9.1",
     "rollup-plugin-node-resolve": "^3.3",
-    "rollup-plugin-uglify": "^4.0",
-    "sinon": "^4.0"
+    "rollup-plugin-uglify": "^4.0"
   },
   "scripts": {
     "start": "rollup --config --watch",

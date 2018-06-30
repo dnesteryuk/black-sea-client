@@ -39,22 +39,20 @@ const Barn = {
    * Thus, cached resources can be served when the user is offline.
    */
   shift: function() {
-    Promise.all([
-      caches.open(prefetchKey),
-      caches.open(offlineKey)
-    ]).then(([prefetchCache, offlineCache]) => {
-      prefetchCache.keys().then((keys) => {
-        keys.forEach((request) => {
-          prefetchCache.match(request)
-            .then((response) => {
-              return offlineCache.put(request, response);
-            })
-            .then(() => {
-              prefetchCache.delete(request);
-            })
+    Promise.all([caches.open(prefetchKey), caches.open(offlineKey)])
+      .then(([prefetchCache, offlineCache]) => {
+        prefetchCache.keys().then((keys) => {
+          keys.forEach((request) => {
+            prefetchCache.match(request)
+              .then((response) => {
+                return offlineCache.put(request, response);
+              })
+              .then(() => {
+                prefetchCache.delete(request);
+              })
+          });
         });
       });
-    });
   },
 
   /**
