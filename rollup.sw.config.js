@@ -1,4 +1,3 @@
-import uglify from 'rollup-plugin-uglify';
 import conf from './rollup.config';
 
 conf.input = 'src/sirko_sw.js';

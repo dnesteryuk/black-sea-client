@@ -4,11 +4,13 @@ const resolve  = require('rollup-plugin-node-resolve'),
 
 let proxies = {
   '/sirko_sw.js': '/base/test/support/sirko_sw.js',
-  '/stub.html': '/base/test/support/fixtures/stub.html'
+  '/stub.html': '/base/test/support/fixtures/stub.html',
+  '/images/logo.png': '/base/test/support/fixtures/stub.png',
+  '/images/head.png': '/base/test/support/fixtures/stub.png'
 };
 
 // dummy assets required for testing
-['main', 'form', 'flash', 'app', 'popup', 'template'].forEach(function(name) {
+['main', 'form', 'app'].forEach(function(name) {
   proxies['/js/' + name + '.js'] = '/base/test/support/fixtures/stub.js';
   proxies['/css/' + name + '.css'] = '/base/test/support/fixtures/stub.css';
 });

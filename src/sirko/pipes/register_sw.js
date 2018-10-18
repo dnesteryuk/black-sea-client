@@ -4,7 +4,7 @@
  */
 const RegisterSW = {
   call: function(data) {
-    navigator.serviceWorker.register('sirko_sw.js');
+    navigator.serviceWorker.register('/sirko_sw.js');
 
     // wait for activation, so the client can communicate with the service worker
     return navigator.serviceWorker.ready.then((registration) => {

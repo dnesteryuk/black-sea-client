@@ -93,7 +93,7 @@ describe('Barn', function() {
           'moved resource',
           done
         )
-      }, 100);
+      }, 200);
     });
 
     it('cleans the prefetch cache', function(done) {
@@ -108,7 +108,7 @@ describe('Barn', function() {
             assert.equal(keys.length, 0);
             done();
           });
-      }, 100);
+      }, 200);
     });
   });
 
@@ -127,7 +127,7 @@ describe('Barn', function() {
           'dummy-html',
           done
         );
-      }, 100);
+      }, 200);
     });
 
     it('prefetches assets', function(done) {
@@ -139,7 +139,7 @@ describe('Barn', function() {
           'dummy-js',
           done
         )
-      }, 100);
+      }, 200);
     });
   });
 

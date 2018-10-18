@@ -1,7 +1,7 @@
 sudo: false
 dist: trusty
 addons:
-  firefox: "59.0"
+  firefox: "62.0"
 language: node_js
 node_js:
   - node
