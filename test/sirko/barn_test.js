@@ -12,22 +12,16 @@ import { prefetchKey, offlineKey } from '../../src/sirko/barn';
  * code to make it more testable. Also, the code would've been more complex.
  */
 describe('Barn', function() {
-  function cacheResponse(cacheName) {
-    return caches.open(cacheName)
-      .then((cache) => {
-        return cache.put(this.request, this.response);
-      });
+  async function cacheResponse(cacheName) {
+    let cache = await caches.open(cacheName);
+    return cache.put(this.request, this.response);
   }
 
-  function assertBody(prom, expectedBody, done) {
-    prom.then((resp) => {
-      assert.isOk(resp);
-      return resp.text();
-    })
-    .then((body) => {
-      assert.include(body, expectedBody);
-      done();
-    });
+  async function assertBody(prom, expectedBody) {
+    let resp = await prom;
+    assert.isOk(resp);
+    let body = await resp.text();
+    assert.include(body, expectedBody);
   }
 
   afterEach(function() {
@@ -43,8 +37,8 @@ describe('Barn', function() {
         this.request = new Request('/js/form.js');
       });
 
-      it('fetches and returns the response', function(done) {
-        assertBody(Barn.get(this.request), 'dummy-js', done);
+      it('fetches and returns the response', function() {
+        assertBody(Barn.get(this.request), 'dummy-js');
       });
     });
 
@@ -56,8 +50,8 @@ describe('Barn', function() {
         return cacheResponse.call(this, prefetchKey);
       });
 
-      it('returns the response from the prefetch cache', function(done) {
-        assertBody(Barn.get(this.request), 'prefetched resource', done);
+      it('returns the response from the prefetch cache', function() {
+        assertBody(Barn.get(this.request), 'prefetched resource');
       });
     });
 
@@ -70,8 +64,8 @@ describe('Barn', function() {
         return cacheResponse.call(this, offlineKey);
       });
 
-      it('returns the response from the offline cache', function(done) {
-        assertBody(Barn.get(this.request), 'offline resource', done);
+      it('returns the response from the offline cache', function() {
+        assertBody(Barn.get(this.request), 'offline resource');
       });
     });
   });
@@ -84,31 +78,22 @@ describe('Barn', function() {
       return cacheResponse.call(this, prefetchKey);
     });
 
-    it('moves prefetched resources to the offline cache', function(done) {
-      Barn.shift();
+    it('moves prefetched resources to the offline cache', async function() {
+      await Barn.shift();
 
-      setTimeout(() => {
-        assertBody(
-          caches.match(this.request, {cacheName: offlineKey}),
-          'moved resource',
-          done
-        )
-      }, 200);
+      assertBody(
+        caches.match(this.request, {cacheName: offlineKey}),
+        'moved resource',
+      );
     });
 
-    it('cleans the prefetch cache', function(done) {
-      Barn.shift();
+    it('cleans the prefetch cache', async function() {
+      await Barn.shift();
 
-      setTimeout(() => {
-        caches.open(prefetchKey)
-          .then((cache) => {
-            return cache.keys();
-          })
-          .then((keys) => {
-            assert.equal(keys.length, 0);
-            done();
-          });
-      }, 200);
+      let cache = await caches.open(prefetchKey),
+          keys = await cache.keys();
+
+      assert.equal(keys.length, 0);
     });
   });
 
@@ -124,9 +109,10 @@ describe('Barn', function() {
       setTimeout(() => {
         assertBody(
           caches.match(this.pages[0].path, {cacheName: prefetchKey}),
-          'dummy-html',
-          done
+          'dummy-html'
         );
+
+        done();
       }, 200);
     });
 
@@ -136,9 +122,10 @@ describe('Barn', function() {
       setTimeout(() => {
         assertBody(
           caches.match(this.assets[0], {cacheName: prefetchKey}),
-          'dummy-js',
-          done
-        )
+          'dummy-js'
+        );
+
+        done();
       }, 200);
     });
   });
@@ -151,15 +138,11 @@ describe('Barn', function() {
       return cacheResponse.call(this, prefetchKey);
     });
 
-    it('removes the prefetch cache', function(done) {
-      Barn.cleanPrefetch()
-        .then(() => {
-          return caches.has(prefetchKey);
-        })
-        .then((existance) => {
-          assert.isFalse(existance);
-          done();
-        });
+    it('removes the prefetch cache', async function() {
+      await Barn.cleanPrefetch();
+
+      let existance = await caches.has(prefetchKey)
+      assert.isFalse(existance);
     });
   });
 });

@@ -29,10 +29,9 @@ describe('Predict', function() {
     });
 
     context('there is no prediction in the cache', function() {
-      it('requests the engine to make a prediction', function() {
-        return Predict.call(this.data, this.conf).then((res) => {
-          assert.deepEqual(res.prediction, predictedList);
-        });
+      it('requests the engine to make a prediction', async function() {
+        let res = await Predict.call(this.data, this.conf);
+        assert.deepEqual(res.prediction, predictedList);
       });
     });
   });

@@ -6,7 +6,7 @@ import Predictor from '../predictor';
  * the engine.
  */
 const Predict = {
-  call: function(data, conf) {
+  call: async function(data, conf) {
     // the prediction is received from the cache
     if (data.prediction) {
       return data;
@@ -15,15 +15,14 @@ const Predict = {
       let predictor = new Predictor(conf.engineUrl),
           request = data.request;
 
-      return predictor.predict({
+      let prediction = await predictor.predict({
         currentPath:  request.currentPath,
         referrerPath: request.referrer,
         assets:       request.assets
-      }).then((prediction) => {
-        data.prediction = prediction;
-
-        return Promise.resolve(data);
       });
+
+      data.prediction = prediction;
+      return data;
     }
   }
 };

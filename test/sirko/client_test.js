@@ -22,13 +22,11 @@ describe('Client', function() {
   });
 
   describe('.predict', function() {
-    it('resolves the given promise', function() {
-      return Client.predict(this.reqInfo, this.conf).then((res) => {
-        let [predictedPages, wasPrevCorrect] = res;
+    it('resolves the given promise', async function() {
+      let [predictedPages, wasPrevCorrect] = await Client.predict(this.reqInfo, this.conf);
 
-        assert.deepEqual(predictedPages, predictedList.pages);
-        assert.equal(wasPrevCorrect, undefined);
-      });
+      assert.deepEqual(predictedPages, predictedList.pages);
+      assert.equal(wasPrevCorrect, undefined);
     });
   });
 });

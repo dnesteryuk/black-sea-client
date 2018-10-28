@@ -38,33 +38,31 @@ const Barn = {
    * Shifts all cached resources from the prefetch cache to the offline cache.
    * Thus, cached resources can be served when the user is offline.
    */
-  shift: function() {
-    Promise.all([caches.open(prefetchKey), caches.open(offlineKey)])
-      .then(([prefetchCache, offlineCache]) => {
-        prefetchCache.keys().then((keys) => {
-          keys.forEach((request) => {
-            prefetchCache.match(request)
-              .then((response) => {
-                return offlineCache.put(request, response);
-              })
-              .then(() => {
-                prefetchCache.delete(request);
-              })
-          });
-        });
-      });
+  shift: async function() {
+    let [prefetchCache, offlineCache] = await Promise.all(
+      [caches.open(prefetchKey), caches.open(offlineKey)]
+    );
+
+    let keys = await prefetchCache.keys();
+
+    let proms = keys.map(async function(request) {
+      let response = await prefetchCache.match(request);
+      await offlineCache.put(request, response);
+      return prefetchCache.delete(request);
+    });
+
+    return Promise.all(proms);
   },
 
   /**
    * Prefetches pages and assets, thus, they can be served from the cache
    * when the user needs them.
    */
-  prefetch: function(pages, assets) {
-    caches.open(prefetchKey)
-      .then((cache) => {
-        prefetchPages(cache, pages);
-        prefetchAssets(cache, assets)
-      });
+  prefetch: async function(pages, assets) {
+    let cache = await caches.open(prefetchKey);
+
+    prefetchPages(cache, pages);
+    prefetchAssets(cache, assets);
   },
 
   /**
