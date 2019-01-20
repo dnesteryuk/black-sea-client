@@ -42,8 +42,10 @@ module.exports = function(config) {
     },
 
     rollupPreprocessor: {
-      format: 'iife',
-      name: 'sirko',
+      output: {
+        format: 'iife',
+        name: 'sirko'
+      },
       plugins: [
         resolve(),
         commonjs(),
