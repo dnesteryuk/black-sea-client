@@ -8,22 +8,19 @@ import Predictor from '../predictor';
 const Predict = {
   call: async function(data, conf) {
     // the prediction is received from the cache
-    if (data.prediction) {
-      return data;
-    }
-    else {
-      let predictor = new Predictor(conf.engineUrl),
-          request = data.request;
+    if (data.prediction) return data;
 
-      let prediction = await predictor.predict({
-        currentPath:  request.currentPath,
-        referrerPath: request.referrer,
-        assets:       request.assets
-      });
+    let predictor = new Predictor(conf.engineUrl),
+        request = data.request;
 
-      data.prediction = prediction;
-      return data;
-    }
+    let prediction = await predictor.predict({
+      currentPath:  request.currentPath,
+      referrerPath: request.referrer,
+      assets:       request.assets
+    });
+
+    data.prediction = prediction;
+    return data;
   }
 };
 

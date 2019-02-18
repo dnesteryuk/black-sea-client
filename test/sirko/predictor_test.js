@@ -1,5 +1,4 @@
 import Predictor from '../../src/sirko/predictor';
-import RegisterSW from '../../src/sirko/pipes/register_sw';
 import helpers from '../helpers';
 import { predictedList } from '../support/prediction_stub';
 
@@ -13,59 +12,46 @@ describe('Predictor', function() {
       assets:      ['/js/main.js']
     };
 
-    this.data = {};
-
-    this.getLatestRequest = () => {
-      return helpers.sendMsgToSWStub(
-        'latestRequest',
-        this.data.serviceWorker
-      );
-    };
-
-    return RegisterSW.call(this.data);
+    return helpers.registerHttpStubs();
   });
 
-  describe('#predict', function(done) {
-    it('makes a request to the engine', function() {
-      return this.predictor.predict(this.entry)
-        .then(this.getLatestRequest)
-        .then((latestRequest) => {
-          assert.isOk(latestRequest);
-          assert.equal(latestRequest.method, 'POST');
-          assert.equal(latestRequest.url, this.engineUrl);
+  describe('#predict', function() {
+    it('makes a request to the engine', async function() {
+      await this.predictor.predict(this.entry);
+      let req = await helpers.latestRequest();
 
-          let expectedBody = {
-            current: this.entry.currentPath,
-            assets:  this.entry.assets
-          };
+      assert.isOk(req);
+      assert.equal(req.method, 'POST');
+      assert.equal(req.url, this.engineUrl);
 
-          assert.deepEqual(latestRequest.body, expectedBody);
-        });
+      let expectedBody = {
+        current: this.entry.currentPath,
+        assets:  this.entry.assets
+      };
+
+      assert.deepEqual(req.body, expectedBody);
     });
 
     context('the referrer is present', function() {
-      it('includes the referrer', function() {
+      it('includes the referrer', async function() {
         this.entry.referrerPath = '/index';
 
-        return this.predictor.predict(this.entry)
-          .then(this.getLatestRequest)
-          .then((latestRequest) => {
-            let expectedBody = {
-              current:  this.entry.currentPath,
-              assets:   this.entry.assets,
-              referrer: this.entry.referrerPath
-            };
+        await this.predictor.predict(this.entry)
+        let req = await helpers.latestRequest();
 
-            assert.deepEqual(latestRequest.body, expectedBody);
-          });
+        let expectedBody = {
+          current:  this.entry.currentPath,
+          assets:   this.entry.assets,
+          referrer: this.entry.referrerPath
+        };
+
+        assert.deepEqual(req.body, expectedBody);
       });
     });
 
-    it('resolves the promise once the prediction gets received', function() {
-      return this.predictor.predict(this.entry)
-        .then((prediction) => {
-          assert.deepEqual(prediction, predictedList);
-        });
+    it('resolves the promise once the prediction gets received', async function() {
+      let prediction = await this.predictor.predict(this.entry);
+      assert.deepEqual(prediction, predictedList);
     });
   });
 });

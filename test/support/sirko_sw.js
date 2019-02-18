@@ -1,4 +1,4 @@
-import { predictedList } from './prediction_stub';
+import HttpStubs from './http_stubs';
 
 // latest request made to the engine
 let latestRequest;
@@ -14,11 +14,22 @@ self.addEventListener('activate', function(event) {
 self.addEventListener('message', function(event) {
   let port = event.ports[0];
 
-  if (event.data === 'latestRequest') {
-    latestRequest.body.then((body) => {
-      latestRequest.body = body;
-      port.postMessage(latestRequest);
-    });
+  if (event.data.command) {
+    let command = event.data.command,
+        details = event.data.details;
+
+    if (command === 'latestRequest') {
+      latestRequest.body.then((body) => {
+        latestRequest.body = body;
+        port.postMessage(latestRequest);
+      });
+    }
+
+    if (command === 'stubRequest') {
+      HttpStubs.register(details);
+      // just send something to tell that it is registered
+      port.postMessage({done: true});
+    }
   }
   else {
     port.postMessage({isStateModified: false});
@@ -26,16 +37,16 @@ self.addEventListener('message', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
-  var req = event.request;
+  var req = event.request,
+      stub = HttpStubs.find(req.method, req.url);
 
-  // kind of a stub for the engine
-  if (req.method === 'POST' && /sirko\.io\/predict/.test(req.url)) {
+  if (stub) {
     latestRequest = {
       method: req.method,
       url:    req.url,
       body:   req.json() // a promise object
     };
 
-    event.respondWith(new Response(JSON.stringify(predictedList)));
+    event.respondWith(new Response(JSON.stringify(stub.response)));
   }
 });

@@ -22,9 +22,9 @@ describe('Predict', function() {
         this.data.prediction = this.prediction;
       });
 
-      it('returns the existing prediction', function() {
-        let res = Predict.call(this.data, this.conf);
-        assert.equal(this.data.prediction, this.prediction);
+      it('returns the existing prediction', async function() {
+        let res = await Predict.call(this.data, this.conf);
+        assert.equal(res.prediction, this.prediction);
       });
     });
 

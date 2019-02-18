@@ -26,27 +26,75 @@ const Helpers = {
   },
 
   /**
-   * There is a service worker (test/support/sirko_sw.js) which is used
-   * to stub requests to the engine. So, it is necessary to have a away
-   * to communicate to the stub. This method opens a message channel to
-   * the service worker, thus, some data can be requested (for instance,
-   * the latest request made to the engine) or set (for example, a response
-   * which should be returned from the engine). Before sending a message,
-   * make sure the service worker handles it.
+   * Registers a service worker (test/support/sirko_sw.js) which is
+   * used in stubbing HTTP requests.
    */
-  sendMsgToSWStub: function(msg, serviceWorker) {
+  registerHttpStubs: async function() {
+    navigator.serviceWorker.register('/sirko_sw.js');
+
+    // wait for activation, so the client can communicate with the service worker
+    this.swHttpStubsRegistration = await navigator.serviceWorker.ready;
+    this.swHttpStubs = this.swHttpStubsRegistration.active;
+  },
+
+  /**
+   * Unregisters the service worker stubbing HTTP requests.
+   */
+  unregisterHttpStubs: async function() {
+    await this.swHttpStubsRegistration.unregister();
+    this.swHttpStubsRegistration = null;
+  },
+
+  /**
+   * Adds a new HTTP stub to the service worker stubbing HTTP requests.
+   *
+   * @param {string} method    - The method in uppercase.
+   * @param {RegExp} url
+   * @param {object} response  - The object to be returned as a JSON response.
+   *
+   * @example
+   *
+   * helpers.stubRequest('POST', /\/predict/, {prediction: {...}});
+   */
+  stubRequest: function(method, url, response) {
+    return this.sendMsgToSwHttpStubs({
+      command: 'stubRequest',
+      details: {
+        method:   method,
+        url:      url,
+        response: response
+      }
+    }, this.swHttpStubs);
+  },
+
+  /**
+   * Returns the latest request which has matched a stubbed HTTP request.
+   */
+  latestRequest: function() {
+    return this.sendMsgToSwHttpStubs({command: 'latestRequest'});
+  },
+
+  /**
+   * There is a service worker stubbing HTTP requests. So, it is necessary to
+   * have a way to communicate to it. This method opens a message channel
+   * to the service worker, thus, communication from tests is possible.
+   * Before sending a message, make sure the service worker handles it.
+   *
+   * @param {*} msg
+   */
+  sendMsgToSwHttpStubs: function(msg) {
     return new Promise((resolve, reject) => {
-      let msgChannel = new MessageChannel();
+      var swChannel = new MessageChannel();
 
       // handler for receiving a message reply from the service worker
-      msgChannel.port1.onmessage = (event) => {
+      swChannel.port1.onmessage = (event) => {
         resolve(event.data);
       };
 
       // send a message to the service worker along with the port for reply
-      serviceWorker.postMessage(
+      this.swHttpStubs.postMessage(
         msg,
-        [msgChannel.port2]
+        [swChannel.port2]
       );
     });
   }
